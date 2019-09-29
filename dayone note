@@ -1,0 +1,142 @@
+###
+Welcome to the python-grow-to-be-professional wiki!
+day 1
+变量和类型
+整型 int()
+浮点 float()
+字符串 str()
+布尔值 
+复数型
+
+chr()：将整数转换成该编码对应的字符串（一个字符）。
+ord()：将字符串（一个字符）转换成对应的编码（整数）
+
+占位符：%d是整数的占位符，%f是小数的占位符，%%表示百分号（因为百分号代表了占位符，所以带占位符的字符串中要表示百分号必须写成%%）
+解决格式化问题
+a += b # 相当于：a = a + b
+a *= a + 2 # 相当于：a = a * (a + 2)
+
+分支结构
+if 
+elif
+else
+
+循环结构
+for..in结构
+range(101)可以用来构造一个从0到100的取值范围，这样就可以构造出一个整数的序列并用于循环中
+range(101)=0~100的整数数列
+range(1,100） 1-99整数数列
+range(1, 100, 2) 1-99整数数列 2为步长
+用for循环实现1~100之间的偶数求和
+sum=0
+for x in range(2,101,2)
+  sum+=x
+print(sum)
+or
+for x in range(1,101)
+  if x%2==0
+  sum+=x
+print(sum)
+
+while 语句
+构造不知道具体循环次数的循环结构，我们推荐使用while循环。
+while循环通过一个能够产生或转换出bool值的表达式来控制循环，表达式的值为True循环继续，表达式的值为False循环结束。
+answer=random.randint(1,100)
+counter=0
+while True:
+  counter+=1
+  number=int(input(''))
+  if number<answer:
+    print()
+  elif number>answer:
+    print()
+  else:
+    print()
+  break
+print('%d'counter)
+需要注意的是break只能终止它所在的那个循环，这一点在使用嵌套的循环结构（下面会讲到）需要引起注意。
+除了break之外，还有另一个关键字是continue，它可以用来放弃本次循环后续的代码直接让循环进入下一轮。
+while num<=3:
+  print(num)
+  num+=1
+else:
+  print()
+while 和 else搭配使用，只有当while为假，并且全部执行完成后才执行else后面的语句。
+除了break之外，还有另一个关键字是continue，它可以用来放弃本次循环后续的代码直接让循环进入下一轮.
+k=1
+while 1:
+  if k>5:
+    break
+  print(k)
+  k+=1
+ 当k小于5时候，if语句不成立，break语句不会被执行，直接执行break语句后面的语句。
+ 当k大于5时候，if语句成立，执行break语句，后面print(k)和k+= 1不会被执行，
+ break语句对应的该while 1语句也不会被执行了，整个程序就停滞了。
+ break语句一旦被执行，和break有同样缩进的语句都不会被执行了，和break对应的while语句也就终止了。
+ 可以用break语句控制程序流程，哪些语句执行，哪些不被执行。
+ 
+ i=1
+ while i<10
+  i+=1
+  if i%2>0
+  continue
+ print(i)
+  #如果是奇数，跳过print，也就是只print偶数
+  
+  i=0 
+while condition=True:
+  words=str(input())
+    if words=='quit'
+      condition=Flase
+    else
+      print(words)
+ 
+ Ctrl + C结束while死循环
+ 
+ CRAPS又称花旗骰，是美国拉斯维加斯非常受欢迎的一种的桌上赌博游戏。该游戏使用两粒骰子，玩家通过摇两粒骰子获得点数进行游戏。
+ 简单的规则是：玩家第一次摇骰子如果摇出了7点或11点，玩家胜；玩家第一次如果摇出2点、3点或12点，庄家胜；
+ 其他点数玩家继续摇骰子，如果玩家摇出了7点，庄家胜；如果玩家摇出了第一次摇的点数，玩家胜；其他点数，玩家继续要骰子，直到分出胜负。
+ 
+ from random import randint
+money=1000 #assume bid=1000
+while money>0: 
+  print(money)
+  needs_go_on=False
+  while True:
+    debt=int(input('请下注') #先下注
+    if 0<debt<=money:
+      break #设置完就可以进入下一步，跳出循环
+    if debt<0
+      print('要整数')
+  first=randint(1,6)+randit(1,6) #第一次投骰子
+  print(first) 
+  if first==7 or first==11:
+     print('玩家赢')
+     money+=debt #玩家赢了，减掉下注
+ elif first==2 or first==3 or first==12:
+     print('庄家赢了')
+     money-=debt #玩家输了，扣钱
+ else:
+     needs_go_on=True #需要下一轮
+ while needs_go_on:
+     needs_go_on=Flase #假设不需要下一轮 
+     current=randint(1,6)+randint(1,6) #第二次投骰子
+ print()
+ if current==7:
+    print('')
+    moeny-=debt
+ elif current==first
+    print('')
+    moneg+=debt
+ else:
+    needs_go_on=True
+    
+   穷举法：
+   for x in (0,20):
+        for y in (0,33):
+          z=100-x-y
+          if x*5+y*3+z/3=100:
+            print(x,y,z)
+          
+          
+##
