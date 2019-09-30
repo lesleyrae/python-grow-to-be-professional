@@ -20,4 +20,19 @@ return k
 
 练习3:99乘法表
 
+练习4:判断是不是回文数
+把数字拆开一个个
+第一个数字=最后一个
+第二个数字=倒数第二个
+
+def ishui():
+num=Input(‘pls input an number’)
+l=len(num)
+huiwenshu=true
+For n in range(1,l/2):
+    If num[n]!=num[-n]:
+        huiwenshu=false
+        break
+
     
+
