@@ -1,0 +1,23 @@
+day 2
+练习1：输入一个正整数判断是不是素数。
+num=int（input（"输入数字"））
+for k in range(2,n-1):
+  if num%k==0:
+    print("真的")
+  else:
+    print(“不是素数“)
+    
+练习2: 输入两个正整数，计算它们的最大公约数和最小公倍数。
+a=int(input("第一个数"))
+b=int(input(“第二个数”))
+if a<b:
+  smaller=a
+else:
+  smaller=b
+for k in range(2,smaller):
+  if biger%k==0 and smaller%k==0:
+return k
+
+练习3:99乘法表
+
+    
