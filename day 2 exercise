@@ -1,22 +1,38 @@
 day 2
 练习1：输入一个正整数判断是不是素数。
-num=int（input（"输入数字"））
-for k in range(2,n-1):
-  if num%k==0:
-    print("真的")
-  else:
-    print(“不是素数“)
+判断素数：
+一个数要么被1或者自己除
+def sushu():
+  num=int(Input(n))
+  Issu=false
+  For I in range (2,num):
+        If num%I==0:
+            issu=true
+  Return issu
+
     
 练习2: 输入两个正整数，计算它们的最大公约数和最小公倍数。
 a=int(input("第一个数"))
 b=int(input(“第二个数”))
 if a<b:
-  smaller=a
+  a=smaller
 else:
-  smaller=b
-for k in range(2,smaller):
-  if biger%k==0 and smaller%k==0:
-return k
+  b=smaller
+  for i in range(2,smaller):
+    if a%i==0 and b%i==0:
+      hcf=i
+  return hcf
+  
+if a>b:
+  a=larger
+else:
+  b=larger
+  while true: 
+      if larger%a==0 or larger%b==0:
+      lcm=larger
+   larger+=1
+return larger
+
 
 练习3:99乘法表
 
@@ -34,5 +50,6 @@ For n in range(1,l/2):
         huiwenshu=false
         break
 
-    
-
+if huiwenshu=true, print()
+if huiwenshu=false,print()
+练习3：实现判断一个数是不是素数的函数。
