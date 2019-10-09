@@ -1,0 +1,66 @@
+序列
+索引[0:n-1]
+字符串‘’ 
+列表[]
+元祖（）
+标准类型运算符：值比较，对象身份比较，布尔运算
+序列类型运算符：获取，重复，连接，判断
+内建函数：序列类型转换内建函数，序列类型可用内建函数
+内容重复的多个序列*3
+连接运算符+
+list()
+str()
+tuple()
+序列类型内建函数：
+enumerate()元素+索引构成的元祖
+reversed()倒序
+len() sorted()
+max() sum()
+min()
+zip()——对象对应的对象打包成元祖
+
+字符串
+r“”
+（）
+三引号可以让字符串保持原貌
+print('there are %d punctuation marks.'%(count))
+%+格式化运算符
+print('there are {0:d} punctuation marks.'.format(count))
+{0:d}
+从参数第几位开始算起。
+d十进制整数
+f浮点数
+e指数记法
+8.3f（3位浮点数，占八列）
+age：{0:<5d}默认左对齐，占五列
+默认数字可以不写
+print('{:<8d}{:<8s}{:8s}')
+
+判断是不是回文串：
+str=''
+if(str==''.join(reversed(str)):
+#字符逆序，然后用join连起来
+  print('yes')
+  
+song='i am a little girl'
+song.find()
+song.lower()
+song.split（'/'）
+#把字符串截断）
+song.replace('the','that')
+alist=['hello','world']
+''.join(alsit)
+连接字符串
+
+解码
+z=y.encode('')
+
+判断
+astring='what do you think of this saying 'no pain no gain'?'
+tempstr=astring.split("\'")[1]
+单引号记得转义符
+\n换行
+\在行尾的续行符
+
+
+
