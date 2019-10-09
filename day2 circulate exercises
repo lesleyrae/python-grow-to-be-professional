@@ -50,6 +50,7 @@ For n in range(1,l/2):
         huiwenshu=false
         break
 
+tem=.join(reversed(num))
+
 if huiwenshu=true, print()
 if huiwenshu=false,print()
-练习3：实现判断一个数是不是素数的函数。
