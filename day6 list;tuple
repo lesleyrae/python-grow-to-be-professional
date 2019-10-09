@@ -1,0 +1,57 @@
+数据结构
+列表可扩展性
+可包含不同类型
+jscores.sort()
+排序
+jscores.pop()
+jscores.pop(0)
+week.extend(weekend)
+列表元素扩展
+week.append(weekend)
+两个列表连接
+for i,j in enumerate(week):
+  print(i+1,j)
+将列表中的索引列出来
+
+1.使用sort排序
+my_list = [3, 5, 1, 4, 2]
+my_list.sort()
+my_list.sort(key=len)#按照长度排序
+print my_list
+使用sort()方法对list排序会修改list本身,不会返回新list，通常此方法不如sorted()方便
+2.使用sorted()排序
+my_list = [3, 5, 1, 4, 2]
+result = sorted(my_list)
+print result
+
+reverse\reversed
+
+#列表解析
+多个for循环+可迭代序列
+[x for x in range(10)]
+[x**2 for x in range(10)]
+[x**2 for x in range(10) if x**2<100]
+[(x+1,y+1) for x in range(2) for y in range(2)]
+
+#选出只有咖啡名的字符
+Cafelist=['404Latte','Cappituno88_99','Expresso505@','Mocha032432_']
+def cleanlist(a):
+  Cafelist=list(input(''))
+  cafecleanlist=[]
+  for item in Cafelist:
+    for c in item:
+      if c.isalpha==True:
+        print(c)
+  cafecleanlist.append(item)
+return cafecleanlist
+
+##每个打印出来
+for k,v in zip(range(1,len(cafecleanlist)+1)),cafecleanlist):
+  print(k,v)
+
+ def foo(args1,*argst):
+  print(args1)
+  print(args2)
+ print(‘hello’,’wangdachui’,’niuyun’,’linling’)
+ #*收集参数的作用
+
