@@ -1,0 +1,60 @@
+小型 requests >90%
+中型 scrapy
+大型 定制开发
+
+限制：
+来源审查——urser-agent
+发布公告——robots
+
+类人行为可不参考 robots协议
+
+import requests
+r=requests.get('')
+r.status_code
+r.encoding
+r.text
+
+实例2:亚马逊
+当发生错误的时候，可以查询网络头看一下有没有异常
+r.requests.headers
+kv={'user-agent:'Mozilla/5.0'}
+#'Mozilla/5.0'定义浏览器身份标识
+r=requests.get(url,headers=kv)
+
+实例3:百度、360搜索
+百度关键词接口
+http://www.baidu.com/s?wd=keyword
+360关键词接口
+http://www.so.com/s?q=keyword
+
+import requests
+keyword='Python'
+Try:
+  kv={'wd':keyword}
+  r.requests.get('url',params=kv)
+  print(r.requests.url)
+  r.raise_for_status()
+  print(len(r.text))
+except:
+  print('failure')
+  
+例子4:网络图片存储
+jpg结尾的图片
+url=''
+root=''
+path=root+url.split(‘/’)[-1]
+try:
+    if not os.path.exists(root): #根目录存在吗？
+        os.mkdir(root)
+    if not os.path.exists(path): #路径存在吗？
+        r=requests.get(url)
+        With open(path,’wb’) as f:
+            f.write(r.content)
+            f.close()
+            Print(‘’)
+    Else:
+        Print(‘already exists’)
+Except:
+    Print(‘failure’)
+
+r=requests.get(url)
