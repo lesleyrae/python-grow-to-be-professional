@@ -1,0 +1,125 @@
+删除字典
+astock.clear()
+get()
+
+json格式
+import json
+json.dumps(x)
+将字典变成json格式
+json.loads(X)
+还原
+
+集合
+可变集合&不可变集合
+set()函数 可变
+froznset（） 不可变
+a<b 左边是右边的子集
+
+关系运算
+& 交：相同成员 &=
+| 并：所有成员 |=
+a-b 差：出现在aset不在bset -=
+^ 对称差分：不能同时属于两个集合 ^=
+
+面向所有集合函数
+aset=
+bset=
+aset.issubset(bset)
+aset.difference()
+aset.copy()
+aset.add()
+aset.remove()
+aset.update()
+aset.clear()
+
+scipy
+数据结构
+ndarray(n维数组）
+series(变长字典)
+numpy（）
+
+import numpy as np
+numpy 数组
+matplotlib（）图库
+pandas（高校series和dataframe)
+
+ndarray
+5*5数组
+dimensions 轴 axis 秩 rank
+ndarray.ndim(秩) 2
+ndarray.shape(维度) （5，5）
+ndarray.size（个数）25
+ndarray.dtype 元素类型
+ndarray.itemsize 元素字节大小
+array[(1,2,3),(4,5,6)]
+arange
+random
+linspace 等差数组
+numpy.linspace(start, stop[, num=50[, endpoint=True[, retstep=False[, dtype=None]]]]])
+zeros()返回一个全0的n维数组
+ones()返回一个全1的n维数组，同样也有三个参数
+
+[[1,2,3,]
+ [4,5,6]
+ [7,8,9]]
+ x[0]第一行
+ x[:,[0,2]]第一列，第三列
+ x[::2]第一行，第三行
+ x[:,::2]第一列，第三列
+ x[::-1] 交换了行
+ x[:,::-1] 
+ 改变维度reshapre(3,2)
+ resize
+ 
+ 4lines 4 row
+ arrang(1,17).reshape(4,4)
+ arrang(1,17).reshape(2,-1)
+ array.vstack(barray,carray)
+ array.hstack(barray,carray)
+ npy数组的广播
+ 
+ Series
+ aser=series([],index=[1,2,3])
+ aser.index
+ aser.values
+ np.exp(aser)
+ 对齐
+ 
+ dataframe
+ data=np.array([(),(),()])
+ frame=pd.DataFrame(data,index=range(1,4),columns=[])
+ frame.pay or frame['name']
+ frame.iloc[:2,1]
+ 0,1array
+ 1 column
+ 
+ frame.pay.min()
+ frame[frame.pay>='5000']
+ 
+ 英文词频统计
+ poem_en='I am Lei Yanzhen,from nanjing university,majoring in sociology. i am going to furthur study in the us and wanna study information technology.'
+ poem_list=poem_en.split()
+ p_dict={}
+ for item in poem_list:
+  if item[-1] in ',.\'\"':
+    item=item[:-1]
+  if item not in p_dcit:
+    p_dict[item]=1
+  else
+    p_dict[item]+=1
+  
+ or 
+ p_dict[item]=p_dict.get(item,0)+1
+ 
+ def func(stu_list):
+  d={}
+  for item in stu_list(''):
+    r=item.split('_')
+    a,b=r[0],r[1].strip()
+    if a not in d:
+      d[a]=[b] #对应每个值+键
+    else:
+      d[a]+=[b]
+  sorted(d.items(),key=lambda d:(d[1],d[0]))
+  
+  choice() 方法返回一个列表，元组或字符串的随机项。
