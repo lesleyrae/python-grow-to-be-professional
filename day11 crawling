@@ -1,0 +1,77 @@
+soup=BeautifulSoup()
+import requests
+r=requests.get('http://python123.io/ws/demo.html')
+r.text
+demo=r.text
+soup=BeautifulSoup(demo,"html.parser")
+#解析器
+#lxml html解析器 pip install lxml
+print(soup.prettify())
+#美化展示html格式内容
+soup.title
+#get title
+tag=soup.a
+soup.a.parent.name
+soup.a.parent.parent.name
+tag.attrs
+tag.attrs['class']
+tag.attrs['href']
+#name
+#attributes
+#NavigaleString
+#Comment
+
+下行遍历
+.contents
+.children
+.descendants
+
+上行遍历
+.parents
+.parent
+
+平行遍历
+.next_sibiling
+.previous_sibiling
+
+信息标记
+xml
+<>
+json
+key:"value"
+ymal
+key:value
+无符号键值对
+
+for link in soup.find_all('a'):
+  print(link.get('href')
+ 
+<>find_all(name,attrs,recursive,string)
+for tag in soup.find_all(re.complie('b')):
+  print(tag.name)
+  #包含b的属性的标签
+  
+def getHTMLText(url):
+  try:
+    r=requests.get(url,timeout='')
+    r.raise_for_status()
+    r.encoding=r.apparent_encoding
+    return r.text
+  except:
+    return ''
+
+def fillUnivList(ulist,html):
+  soup=BeautifulSoup(html,'html.parser')
+  for tr in soup.find('tbody').children:
+    if isinstance(tr,bse4.element.Tag):
+      tds=tr('td')
+      ulist.append(tds[0].string,tds[1].string,tds[2].string)
+
+def printUnivList(ulst,num):
+  tplt="{0:^10\t{1:{3}^10\t{2:^10}"
+  #{3}使用空格填充
+  print("tplt.format("ranking","uni",'city'),char(12288))
+  #char(12288)使用中文空格进行填充
+  for i in range(num):
+    u=ulist[i]
+    print("{:^10}\t{:^6\t{:^10}}".format(u[0],u[1],u[2]))
