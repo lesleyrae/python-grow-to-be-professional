@@ -1,0 +1,65 @@
+df=pd.read_excel('Users/rae616188919/Desktop/work1.xlsx')
+df['sum']=df['Python']+df['Math']
+df.to_excel('('Users/rae616188919/Desktop/work1.xlsx')
+
+api获取数据
+import pandas_datareader.data as web
+f=web.DataReader('AXP','stooq')
+f.head(5)
+
+sklearn
+from sklearn import datasets
+iris=datasets.load_iris()
+iris.feature.names
+iris.feature.shape
+
+语料卡
+import nltk
+nltk.download()
+_corpora 选项卡
+
+from nltk.corpus import gutenberg
+import nltk
+print(gutenberg.fileids())
+texts=gutenberg.words('')
+
+matplotlib 绘图
+绘图api——pyplot
+import matplotli.pyplpt as plt
+plt.plot([x],[y])
+
+#ndarray本质是数组，其不同于一般的数组，或者Python 的list的地方在于它可以有N 维（dimentions），也可简单理解为数组里面嵌套数组。
+import numpy as np
+import matplotlib.pyplot as plt
+t=np.arrange(0.,4.,0.1)
+折线图
+plt.plot(t,t+2,t*2,t**2)
+散点图
+plt.scatter(range(7),[3,4,7,6,2,8,9])
+柱状图
+plt.bar(range(7),[3,4,7,6,2,8,9])
+
+plt.legend(loc='upper left')
+plt.best(loc='upper left')
+plt.title('')
+plt.xlabel('')
+plt.ylabel('')
+
+x=np.linspace(-np.pi,np.pi,300)
+#starpoint,endpoint,number
+#均匀产生n个数值
+plt.figure(1)
+plt.subplot(211)
+plt.plot(x,np.sin(x),color='r')
+plt.subplot(212)
+
+axes([left,bottom,width,height])
+#range(0,1)
+
+pandas绘图
+qutesdf.loc[:9,['close','open']].plot()
+results.loc绝对位置
+results.iloc相对位置
+
+ax=djidf.plot(kind='',x='code',y='price',color='g')
+ax.set(ylabel='price',xlable='',title=
