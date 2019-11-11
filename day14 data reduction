@@ -1,0 +1,30 @@
+数据规约
+属性规约
+属性规约：向前选择，向后删除，决策树，pca
+数值规约：有参方法（回归法，对数线性模型），无参法（直方图，聚类，抽样）
+
+主成分分析——pca
+from sklearn.decomposition import PCA
+X=preprocessing.scale(boston.data)
+pca=PCA(n_components=5)
+#前5个成分
+pd.cut(df.AGE,5,label=range(‘mle’))
+#主动检测成分
+pca.fit(X)
+pca.explianed_variance_ratio_
+变量方差贡献率
+
+数据规约——直方图
+分箱
+import matplotlib.pyplot as plt
+plt.hist(data)
+bins=np.linspace(data.min(),data.max(),3,endpoint=True)
+plt.hist(data,bins=bins,rwidth=0.95,edgecolor='k')
+抽样
+随机抽样
+.sample(n=10,replace=True)
+.sample(frac=0.3,replace=True)
+聚类抽样
+分层抽样
+A=iris_df[iris_df.target==0].sample(frac=0.3)
+A.append(b)
