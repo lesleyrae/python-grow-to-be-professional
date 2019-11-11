@@ -42,3 +42,17 @@ print(pred)
 “肘”方法
 肘部是最好的分类方法
 
+古腾堡项目
+from nltk.corpus import gutenberg
+allwords=gutenberg.words('shakespeare-hamlet.txt')
+len(allwords)
+len(set(allwords))
+allwords.count('hamlet')
+a=set(allwords)
+longwords=[w for w in A if len(w)>12]
+
+fd2=FreqDist([sx.lower() for sx in allwords if sx.isalpha()])
+print(fd2.B()) 不同的单词
+print(fd2.N()) 所有的单词
+fd2.tabulate(20)
+f2.plot(20)
