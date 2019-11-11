@@ -1,0 +1,58 @@
+数据探索 
+检查数据错误
+了解数据分布特征和内在规律
+数据预处理
+数据清洗
+数据集成
+数据变换
+数据规约
+
+缺失值处理
+固定值、均值、上下数据、插值函数、最可能的
+quotesdf_nan.isnull()
+quotesdf_nan.dropna(how='all')
+quotesdf_nan.dropna(how='any')
+quotesdf_nan.fillna(quotesdf_nan.mean(),inplace=True)
+quotesdf_nan.fillna(method='ffill')
+quotesdf_nan.fillna(method='bfill')
+
+异常值缺失
+describe()
+boxplot()
+quotesdf_nan.drop('Volume',axis=1).boxplot()
+
+数据不能大于u+3
+
+布尔索引筛选数据
+quotesdf_nan[abs(quotesdf_nan-quotesdf_nan.man())>3*quotesdf_nan.std()].dropna(how='all')
+
+规划化方法
+from sklearn import datasets
+bostn=datasets.load_boston()
+boston.feature_names
+bostn.target
+import pandas as pd
+规范化处理
+1.x'=(x-min)/(max-min)
+(df-df.min())/(df.max()-df.min())
+from sklearn import preprocessing
+preprocessing.minmax_scale(df)
+2.z score-规范化(使用最多)
+(df-df.mean())/df.std()
+preprocessing.scale(df)
+3.小数定标规范化
+df/10**np.ceil(np.log10(df.abs().max()))
+
+连续属性离散化
+分箱：等宽法，等频法
+1.
+pd.cut(df.AGE[:20],5,label=range(5))
+bins=[1,2,3,4](1,2],(2,3],(3,4],(4,5]
+等频法
+pd.qcut(df.AGE,5,label=range(5))
+
+特征二值化binarization
+threhsold
+binarizer() lable encode
+x=boston.target.reshape(-1,1)
+Binarizer(threhold=20),fit_transform(X)
