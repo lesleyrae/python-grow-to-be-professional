@@ -36,3 +36,9 @@ for i in range(len(status):
   #涨跌函数diff
 kmeans=KMeans(n_cluster=3).fit(status)
 print(pred)
+
+调参
+误差平方和sse
+“肘”方法
+肘部是最好的分类方法
+
