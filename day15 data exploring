@@ -86,7 +86,3 @@ pd.concat(pieces)
 
 pd.merge(djidf.drop(['price'],axis=1),Akdf,on='code')
 
-聚类分析
-
-max（quotesdf.open）
-quotesdf.loc[:,['close','open'].applymap(int)]
