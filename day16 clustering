@@ -1,0 +1,38 @@
+聚类分析
+
+max（quotesdf.open）
+quotesdf.loc[:,['close','open'].applymap(int)]
+
+import numpy as np
+from scipy.cluster.vq import * vq,kmeans,whiten
+list1=[]
+list2=[]
+list3=[]
+list4=[]
+list5=[]
+list6=[]
+data=np.array([list1,list2,list3,list4,list5])
+whiten=whiten(data)
+centriods,_=kmeans(whiten,2)
+#使用kmeans聚类，第一个参数为数据，第二个参数是k类，得到的结果是二维的，所以加一个下划线表示不取第二个值，第一个值为得到的聚类中心，第二个值为损失
+result,_=vq(whiten,centriods)
+#使用vq函数根据聚类中心将数据进行分类，输出的结果为二维，第一个结果为分类的标签，第二个结果不需要。
+prints
+
+机器学习模块
+x=np.arrary([])
+kmeans=KMeans(n_cluster=3).fit(X)
+pred=keans.predict(X)
+print(pred)
+
+基于10只道指成分股近一年来相邻两天收盘价涨跌数据规律对它们进行聚类分析
+listdjj=['','','']
+listTemp=[0]*len(listdjj)
+for i in range(len(listTemp)):
+  listTemp[i]=create_df(listDjj[i].close)
+status=[0]*len(listdjj)
+for i in range(len(status):
+  status[i]=np.sign(np.diff(listTemp[i]))
+  #涨跌函数diff
+kmeans=KMeans(n_cluster=3).fit(status)
+print(pred)
