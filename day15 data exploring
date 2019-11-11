@@ -1,0 +1,92 @@
+缺失值
+异常值
+不一样的数据
+iris_df.target.astype(float)
+数据特征分析
+分布分析
+定量、定性
+import matplotlib.pyplot as plt
+plt.hist(iris_df.iloc[:,0],30,color='c')
+import scipy
+scipy.stats.normaltest(iris_df.iloc[:,0],axis=0)
+PVLAUE>0.05
+
+iris_df.target.value_counts().plot(kind='pie')
+
+集中趋势分析：均值、中位数
+离中趋势分析：标准差、四分位距
+
+iris_df.iloc[:,0].mean()
+iris_df.iloc[:,0].median()
+iris_df.iloc[:,0].std()
+iris_df.iloc[:,0].quantile([0.25,0.75])
+iris_df.iloc[:,0].quantile([0.75]).loc[0.75]-iris_df.iloc[:,0].quantile([0.25]).loc[0.25]
+iris_df.iloc[:,0].describe()
+
+相关分析
+散点图
+x=[item[0] for item in iris.data]
+y=[item[1] for item in iris.data]
+plt.scatter(x[:50],y[:50],color='r')
+plt.scatter(x[50:100],y[50:100],color='g')
+plt.scatter(x[100:],y[100:],color='b')
+plt.show()
+
+相关系数——pearson相关系数
+不服从正太分布_spearman/kendall
+>0.5相关度高
+
+iris_df.iloc[:,[0,1,4]].corr(method)
+iris_df['target'].corr(iris_df.iloc[:0])
+
+热力图
+import seaborn as sns
+sns.heatmap(iris_df.iloc[:,[0,1,4]].corr(method),annot=True,fmt='.1f',cmap='rainbow')
+sns.heatmap(iris_df.iloc[:,[0,1,4]].corr(method),annot=True,fmt='.1f',cmap='cwarm')
+
+基于pandas的数据分析
+djidf.price.mean()
+djidf[djdf.price>=300].name
+djidf[djdf.price>=300|djdf.price<=50].name &
+t=quetesdf[(quotesdf.index>='2019-09-01'&(quotesdf.index<='2019-09-30'))]
+
+相邻函数对比
+status=np.sign(np.diff(quotesdf.close))
+len(status[status==1])
+len(status[status==-1])
+
+排序
+tempdf=djidf.sort_values(by='price',ascending=False)
+tempdf[:3,name]
+
+month=[item[5:7] for item in quotesdf.index]
+quotesdf.groupby(month).apply(len)
+quotesdf.groupby(month).groups
+for k,data in quotesdf.groupby(month):
+  print(k)
+  print(data)
+  
+  所有参数的最大值
+ quotesdf.max()
+ 单独一个索引的最大值
+  quotesdf.max(axis=1)
+  quotesdf.groupby(month)
+djidf[djdf.price>=300|djdf.price<=50].name 
+
+quotesdf.groupby(month).open.count()
+
+for k,data in quotesdf.groupby(month):
+
+quotesdf.loc[:,['close','open'].astype(int)]
+
+append
+tempdf=quotesdf[quotesdf.indx>='2019-09-01'&(quotesdf.index<='2019-09-30')]
+pieces=[tempdf[:3],tempdf[-3:]]
+pd.concat(pieces)
+
+pd.merge(djidf.drop(['price'],axis=1),Akdf,on='code')
+
+聚类分析
+
+max（quotesdf.open）
+quotesdf.loc[:,['close','open'].applymap(int)]
