@@ -86,3 +86,35 @@ pd.concat(pieces)
 
 pd.merge(djidf.drop(['price'],axis=1),Akdf,on='code')
 
+pd.pivot_table(df1,values='rating',index='gender',aggfunc=pd.Series.std)
+df1.groupby('gender').rating.std()
+
+wine
+#读取文件
+try:
+    wine = pd.read_csv('winequality-red.csv', sep = ';') 
+except:
+    print("Cannot find the file!")
+#查看属性、删除重复值
+print(wine.info())
+print(wine.describe())
+wine = wine.drop_duplicates()
+#看看有多少分类
+wine['quality'].value_counts().plot(kind = 'pie', autopct = '%.2f')
+plt.show()
+#相关性检验
+print(wine.corr().quality)
+#定性饼图看关系
+plt.subplot(121)
+sns.barplot(x = 'quality', y = 'volatile acidity', data = wine)
+plt.subplot(122)
+sns.barplot(x = 'quality', y = 'alcohol', data = wine)
+plt.show()
+#分箱
+from sklearn.preprocessing import LabelEncoder
+bins = (2, 4, 6, 8)
+group_names  = ['low', 'medium', 'high']
+wine['quality_lb'] = pd.cut(wine['quality'], bins = bins, labels = group_names)
+#增加标签
+lb_quality = LabelEncoder()    
+wine['label'] = lb_quality.fit_transform(wine['quality_lb']) 
