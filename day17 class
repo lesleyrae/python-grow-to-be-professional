@@ -1,0 +1,71 @@
+面向对象特征
+类的具体化是对象
+类是模版，对象是值的范畴
+
+对象（实例）
+类（对象特征）
+类的定义:
+class ClassName(object):
+  'define ClassName class'
+   class_suite
+
+class Dog(object):
+  def greet(self):
+    print('Hi')
+
+dog=Dog()
+dog.greet()
+
+定义类——Dog
+创建实例——dog
+调用方法——dog.greet
+
+实例属性
+class Dog(object)
+  'define Dog class'
+  def setName(self,name):——实例属性
+    self.name=name 
+  def greet(self)
+    pirnt('hi'%self.name)
+if __name__=='__main__'
+  dog=Dog()
+  dog.setName('Paul')
+  dog.greet()
+  
+ __init__()举例
+class Dog(object)
+  'define Dog class'
+  def __init__(self,name):——实例属性
+    self.name=name 
+  def greet(self)
+    pirnt('hi'%self.name)
+if __name__=='__main__'
+  dog=Dog('Sara')
+  dog.greet()
+  
+类属性——静态属性——
+
+父类（基类）子类（派生类）
+class SubClassName(ParentClass1,ParentClass2)
+
+#bmi class
+体重/身高的平方
+
+class BMI:
+  def __init__(self,height,weight):
+    self.bmi=weight/height**2
+  def printBMI(self):
+    print("Your BMI is {:.1f}".format(self.bmi))
+h=float(input())
+w=float(input())
+x=BMI(h,w)
+x.printBMI()
+
+class China(BMI):
+  def printBMI(self):
+    print("Your BMI is {:.1f}".format(self.bmi))
+    if self.bmi<18.5:
+      print('slim,low occurence')
+    if self.bmi <24:
+      ...
+      
