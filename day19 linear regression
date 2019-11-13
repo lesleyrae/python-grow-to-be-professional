@@ -20,3 +20,32 @@ b,a=clf.coef_,clf.intercept_
 print(b,a)
 x=[[4]]
 print(clf.predict(x))
+
+多元线性回归
+引入库和安装包
+import numpy as np
+import matplotlib.pyplot as plt
+import datasets from sklearn
+import statsmodels.api as sm
+读取数据、描述性统计
+boston=datasets.load_boston()
+x=boston.data
+y=boston.target
+print(boston.DESCR)
+读取数据
+x=pd.DataFrame(boston.data,columns=boston.feature_names)
+y=pd.DataFrame(boston.target,columns=['MEDV'])
+添加常数项
+x_add1=sm.add_constant(x)
+ols模型训练
+model=sm.OLS(y,x_add1),fit()
+print(model.summary())
+删除p不显著的自变量
+x.drop('INDUS',axis=1,inplace=Trre)
+重新训练
+model=sm.OLS(y,x_add1),fit()
+print(model.summary())
+print(model.params)
+预测
+x_test=np.array([])
+print(model.predict(x_test))
