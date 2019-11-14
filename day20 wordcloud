@@ -1,0 +1,53 @@
+import jieba.posseg as pseg
+import matplotlib.pyplot as plt
+from os import path
+import re
+import requests
+import os
+from scipy.misc import imread
+from wordcloud import WordCloud
+
+#打开文件
+with open('subjects.txt','w',encoding='utf-8') as f:
+#开发者管理获取网页
+    url='https://feed.mix.sina.com.cn/api/roll/get?pageid=153&lid=2509&k=&num=50&page=1&r=0.9843264026025202&callback=jQuery111209316605163507115_1573641742029&_=1573641742031'
+#解析  
+    r=requests.get(url)
+#用普通编码，然后用中文解析
+    data=r.text.encode('utf-8').decode('unicode-escape')
+#提取题目
+    pattern=re.compile('"title":(.*?),"')
+    p=re.findall(pattern,data)
+    for s in p:
+        f.write(s)           
+#读取所有的行
+    news_subjects= f.readlines()
+
+#删去停用词strip，去除重复词语set
+stop_words=set(line.strip() for line in open('stopwords.txt',encoding='utf-8'))
+
+newlist=[]
+for subject in news_subjects:
+    if subject.isspace():
+        continue
+#读取名词
+    p=re.compile('n[a-z0-9]{0,2}')
+#分词
+    word_list=pseg.cut(subject)
+    for word,flag in word_list:
+        if not word in stop_words and p.search(flag)!=None:
+            newlist.append(word)
+手动计算词频 
+Python 字典(Dictionary) get() 函数返回指定键的值，如果值不在字典中返回默认值。
+content={}
+for item in newlist:
+    content[item]=content.get(item,0)+1
+d=path.dirname(os.path.abspath('__file__'))
+也可以基于一些图的轮廓来设置词云形状，
+mask_image=imread(path.join(d,'mickey.png'))
+利用 WordCloud()函数基于词创建词云，这里选择词频最高的 10 个词
+wordcloud=WordCloud(font_path="simhei.ttf",background_color='grey',mask=mask_image,max_words=20).generate_from_frequencies(content)
+plt.imshow(wordcloud)
+plt.axis('off')
+wordcloud.to_file('wordcloud.jpg')
+plt.show()
