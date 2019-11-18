@@ -1,0 +1,48 @@
+#CrowTaobaoPrice.py
+import requests
+import re
+ 
+def getHTMLText(url):
+    kv={'cookie':'cookie: thw=cn; v=0; cna=leRHFreyi3ICAbcbxew+Wj9O; t=2176b1e41f42eb17854df32d05a92c37; cookie2=1009d1a612d181af8f26dec23c98ae0e; _tb_token_=77e197ea43e4d; unb=2145637418; uc3=lg2=UtASsssmOIJ0bQ%3D%3D&id2=UUkKecDOPoL%2BgA%3D%3D&vt3=F8dByuWhIfktJWv0Xpw%3D&nk2=0%2BI2OEudMA%3D%3D; csg=c4886672; lgc=%5Cu963F%5Cu96F7rae; cookie17=UUkKecDOPoL%2BgA%3D%3D; dnk=%5Cu963F%5Cu96F7rae; skt=591be9deb403cd26; existShop=MTU3NDA2NzQ1Nw%3D%3D; uc4=nk4=0%400VmC19G7yHgU1hyF42goftJX&id4=0%40U2uGwXa1Z0%2FTfdVLdu28PlMhJih3; tracknick=%5Cu963F%5Cu96F7rae; _cc_=WqG3DMC9EA%3D%3D; tg=0; _l_g_=Ug%3D%3D; sg=e8f; _nk_=%5Cu963F%5Cu96F7rae; cookie1=AVV33xX3Jmd9EmgPdsW3JSWEQFbDNk8fAF%2BOP2TD3uA%3D; enc=ejtjclnQoP191%2F%2FgIFDVSJBRmzU3F2M7FKb3Tbwl4hGSqw4IcSsGgDNYuGDctyxwHyWdtAQJ51r8YD0yg16wBw%3D%3D; mt=ci=40_1; hng=CN%7Czh-CN%7CCNY%7C156; JSESSIONID=B2BBC7460CF6AE098B1405279DEE1EF1; l=dBEIZ8HVq0Gx-CJLBOfwdurza77OgIdfCmNzaNbMiIB197CSMdFKfHwCthceh3QQEtfv7etrY0mCmRQrr3aN914Ki2trCyCkbxJ6-; isg=BGJi0ZoDS28u0FczhKvzPhpJs-7Es2bNS75QYaz6E1VHfwf5lEP_3CK1r_smzd5l; uc1=cookie15=VT5L2FSpMGV7TQ%3D%3D&cookie14=UoTbmVA1AIGtEQ%3D%3D','user-agent':'Mozilla/5.0'}
+    try:
+        r = requests.get(url, headers=kv,timeout=30)
+        r.raise_for_status()
+        r.encoding = r.apparent_encoding
+        return r.text
+    except:
+        return ""
+     
+def parsePage(ilt, html):
+    try:
+        plt = re.findall(r'\"view_price\"\:\"[\d\.]*\"',html)
+        tlt = re.findall(r'\"raw_title\"\:\".*?\"',html)
+        for i in range(len(plt)):
+            price = eval(plt[i].split(':')[1])
+            title = eval(tlt[i].split(':')[1])
+            ilt.append([price , title])
+    except:
+        print("")
+ 
+def printGoodsList(ilt):
+    tplt = "{:4}\t{:8}\t{:16}"
+    print(tplt.format("序号", "价格", "商品名称"))
+    count = 0
+    for g in ilt:
+        count = count + 1
+        print(tplt.format(count, g[0], g[1]))
+         
+def main():
+    goods = '书包'
+    depth = 3
+    start_url = 'https://s.taobao.com/search?q=' + goods
+    infoList = []
+    for i in range(depth):
+        try:
+            url = start_url + '&s=' + str(44*i)
+            html = getHTMLText(url)
+            parsePage(infoList, html)
+        except:
+            continue
+    printGoodsList(infoList)
+     
+main()
