@@ -1,0 +1,113 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+#绝对值
+#制造随机数组，两组
+#np.random.rand(30,2),period_range('','')
+%matplotlib inline
+data=pd.DataFrame(np.random.rand(30,2)*1000,columns=['a_sale','b_sale'],index=pd.period_range('20170601','20170630'))
+print(data.head())
+
+from pylab import * 
+import matplotlib
+matplotlib.rcParams['font.family'] = 'Microsoft YaHei'
+mpl.rcParams['font.sans-serif'] = ['Microsoft YaHei'] #更新字体格式
+mpl.rcParams['font.size'] = 9 
+#折线图 .plot(kind=,style='',alpha=,figsize=,titile='')
+data.plot(kind='line',style='--',alpha=0.8,figsize=(10,3),title='AB产品销量对比-折线图')
+
+#柱状图 data.plot(kind='bar')
+data.plot(kind='bar',width=0.8,alpha=0.6,figsize=(10,3),title='AB产品销量对比-折线图')
+
+#创建子图和间隔空间
+#创建图 
+plt.figsure(figsize=())
+fig3=plt.figure(figsize=(10,6))
+#子图间隔 plt.subplots_adjust(hspace=)
+plt.subplots_adjust(hspace=0.3)
+#增加子图 1层1个2层，第一个
+ax1=fig3.add_subplot(2,1,1)
+x=range(len(data))
+y1=data['a_sale']
+y2=-data['b_sale']
+plt.bar(x,y1,width=1,facecolor='yellowgreen',edgecolor='black')
+plt.bar(x,y2,width=1,facecolor='lightskyblue',edgecolor='black')
+plt.title('AB产品销量对比-堆叠图')
+plt.grid()
+# range(start,stop,step)
+plt.xticks(range(0,30,6))
+# 横轴坐标
+ax1.set_xticklabels(data.index[::6])
+#创建第二个图
+ax2=fig3.add_subplot(2,1,2)
+x=range(len(data))
+#创建差值
+y3=data['a_sale']-data['b_sale']
+#折线图 plot(style,color)
+plt.plot(x,y3,'--go')
+#参考线
+plt.axhline(0,color='r',linestyle='--',alpha=0.8)
+plt.grid()
+plt.title('ab产品差值折线')
+plt.xticks(range(0,30,6))
+ax2.set_xticklabels(data.index[::6])
+
+#2.相对分析
+#（1）结构分析 dataframe({'':,'':,index=})
+data=pd.DataFrame({'a_sale':np.random.rand(30)*1000,
+                  'b_sale':np.random.rand(30)*200},
+                 index=pd.period_range('20170601','20170630'))
+print(data.head())
+#营收占比
+data['a_per']=data['a_sale']/data['a_sale'].sum()
+data['b_per']=data['b_sale']/data['b_sale'].sum()
+
+#百分比
+data['a_per%']=data['a_per'].apply(lambda x: '%.3f%%' %(x*100))
+data['b_per%']=data['b_per'].apply(lambda x: '%.3f%%' %(x*100))
+print(data.head())
+
+#建立画布
+fig,axes=plt.subplots(2,1,figsize=(10,6),sharex=True)
+# data[['a_sale','b_sale']].plot 绝对值
+data[['a_sale','b_sale']].plot(kind='line',style='--',alpha=0.6,ax=axes[0])
+#axes 代表图例,图例的位置
+axes[0].legend(loc='upper right')
+# data[['a_per','b_per']].plot 相对值
+data[['a_per','b_per']].plot(kind='line',style='--',alpha=0.6,ax=axes[1])
+axes[1].legend(loc='upper right')
+
+#（2）比例分析
+data = pd.DataFrame({'consumption':np.random.rand(12)*1000 + 2000,
+                     'salary':np.random.rand(12)*500+5000},index=pd.period_range('2017/1','2017/12',freq='M'))
+data['portion']=data['consumption']/data['salary']
+print(data.head())
+#面积图，ylim=[0.3,0.6]设置纵轴比例
+data['portion'].plot.area(color='blue',alpha=0.5,ylim=[0.3,0.6],figsize=(10,3),grid=True)
+
+#(3) 空间比较分析
+data=pd.DataFrame({'a':np.random.rand(30)*5000,'b':np.random.rand(30)*2000,'c':np.random.rand(30)*10000,'d':np.random.rand(30)*800},
+                  index=pd.period_range('20170601','20170630'))
+print(data.head())
+data.sum().plot(kind='bar',color=['r','g','b','k'],alpha=0.8,figsize=(10,6),grid=True)
+# 添加数据标志
+for i,j in zip(range(4),data.sum()):
+        plt.text(i-0.25,j+2000,'%.2f%%' %j,color='k')
+        
+#(4) 动态对比分析
+data=pd.DataFrame({'a':np.random.rand(30)*2000+1000},index=pd.period_range('20170601','20170630'))
+data['base']=1000
+data['growth']=data['a']-data['base']
+#逐期增长率
+data['tongbi']=data['a']-data.shift(1)['a']
+#替换缺失值
+data[data.isnull()]=0
+print(data.head())
+data[['growth','tongbi']].plot(figsize=(10,4),style='--',alpha=0.8)
+
+#增长速度
+data['lspeed']=data['growth']/data['base']
+data['tspeed']=data['tongbi']/data.shift(1)['a']
+data[['lspeed','tspeed']].plot(figsize=(10,6),style='--',alpha=0.8)
+plt.axhline(0,color='r',linestyle='--',alpha=0.8)
+plt.grid()
