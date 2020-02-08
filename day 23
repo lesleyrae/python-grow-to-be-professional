@@ -1,0 +1,57 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+%matplotlib inline
+
+#变成中文字符
+from pylab import * 
+import matplotlib
+matplotlib.rcParams['font.family'] = 'Microsoft YaHei'
+mpl.rcParams['font.sans-serif'] = ['Microsoft YaHei'] #更新字体格式
+mpl.rcParams['font.size'] = 9 
+
+
+#encoding='gbk',后面命令才能识别中文
+data=pd.read_csv('Desktop/CH01数据特征分析/深圳罗湖二手房信息.csv',encoding='gbk')
+
+#画散点图
+plt.scatter(data['经度'],data['纬度'],
+s=data['房屋单价']/500, #大小按照房屋单价
+c=data['参考总价'], #深浅按照房屋总价
+alpha=0.8, #透明度设置
+cmap='Purples' #图谱设置为紫色)
+plt.grid()
+
+#设置极差
+def d_range(df,*cols):
+    krange=[]
+    for col in cols:
+        crange=df[col].max()-df[col].min()
+        krange.append(crange)
+    return krange
+        
+key1='参考总价'
+key2='参考首付'
+print(d_range(data,key1,key2))
+
+#直方图
+data[key2].hist(bins=10)
+
+#连续变量频率分布情况
+gcut=pd.cut(data[key1],10,right=False)
+gcut_count=gcut.value_counts(sort=False)
+gcut_count
+
+#频率分布直方图
+#变成dataframe
+r_zj = pd.DataFrame(gcut_count) 
+#重新命名 rename(column={:},inplace=True)
+r_zj.rename(columns={gcut_count.name:'频数'},inplace=True)
+r_zj['频率']=r_zj/r_zj['频数'].sum()
+#如何表示百分比 apply(lambda x: %.2f%% %(x*100))
+r_zj['频率%'] = r_zj['频率'].apply(lambda x: "%.2f%%" % (x*100)) 
+#累计频数 cumsum()
+r_zj['累计频率']=r_zj['频率'].cumsum()
+r_zj['累计频率%'] = r_zj['累计频率'].apply(lambda x: "%.2f%%" % (x*100)) 
+#频率分布图 style.bar(subset='',color=,width=)
+r_zj.style.bar(subset=['频率','累计频率'], color='yellow',width=100)
