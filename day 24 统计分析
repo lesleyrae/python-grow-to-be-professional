@@ -1,0 +1,114 @@
+#全国疫情地图
+import pandas
+from pyecharts.charts import Map
+from pyecharts import options as opts
+from pylab import * 
+import matplotlib
+matplotlib.rcParams['font.family'] = 'Microsoft YaHei'
+mpl.rcParams['font.sans-serif'] = ['Microsoft YaHei'] #更新字体格式
+mpl.rcParams['font.size'] = 9 
+
+# 创建一个地图对象
+data= pandas.read_excel('/Users/rae616188919/Desktop/xgyq.xlsx',sheet_name='1')
+# 数据转换为二元的列表
+list1=list(zip(data['省份'],data['新增']))
+# 创建一个地图对象
+map_1=Map()
+#对全局进行设置
+map_1.set_global_opts(
+    #标题
+title_opts=opts.TitleOpts(title='全国疫情地图'),
+    #设置最大数据范围
+visualmap_opts=opts.VisualMapOpts(max_=2500))
+# 使用add方法添加地图数据与地图类型
+map_1.add('新增确诊人数',list1,maptype='china')
+# 使用render方法渲染为html
+map_1.render('全国疫情地图.html')
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+% matplotlib inline
+
+#设置数据p 和 value
+data=pd.DataFrame({'value':np.random.randint(100,120,100),'p':np.random.rand(100)})
+data['f']=data['p']/data['p'].sum()
+print(data.head())
+
+#1.集中趋势度量
+#（1）平均数
+#平均数
+mean1=data['value'].mean()
+#加权平均数
+mean_w=(data['value']*data['f']).sum()/data['f'].sum()
+print('mean1:%.2f' %mean1)
+print('mean_w:%.2f' %mean_w)
+#（2）位置平均数
+# 众数mode,可能有多个mode().tolist()
+m=data['value'].mode().tolist()
+#中位数 median
+med=data['value'].median()
+med
+
+#集中趋势
+data['value'].plot(kind = 'kde',style = '--k',grid = True)
+#mean参考线 plt.axvline(var1,color='',linstyle,)
+plt.axvline(mean1,color='r',linestyle='--', alpha=0.8)
+plt.text(mean1 + 5,0.005,'简单算术平均数: %.2f' % mean1, color= 'r')
+
+#mean_w参考线
+plt.axvline(mean_w,color='b',linestyle='--',alpha=0.8)
+plt.text(mean1 + 5,0.01,'加权算术平均数: %.2f' % mean_w, color='b')
+
+#med参考线
+plt.axvline(med,color='g',linestyle='--',alpha=0.8)
+plt.text(mean1 + 5,0.015,'中位数: %i' % med, color = 'g')
+
+#集中趋势
+data=pd.DataFrame({'a':np.random.rand(30)*1000,'b':np.random.rand(30)*1000},index=pd.period_range('20170601','20170630'))
+#a极差
+a_r=data['a'].max()-data['a'].min()
+b_r=data['b'].max()-data['b'].min()
+print("%.2f%%"%a_r)
+print("%.2f%%"%b_r)
+#分位差 describe 样本的描述性统计量
+sta=data['a'].describe()
+stb=data['b'].describe()
+a_iqr=sta.loc['75%']-sta.loc['25%']
+b_iqr=stb.loc['75%']-stb.loc['25%']
+print(a_iqr)
+print(b_iqr)
+
+#箱型图
+#定义箱型图的颜色，boxes,whiskers,medians,caps
+color=dict(boxes='DarkGreen',whiskers='DarkOrange',medians='DarkBlue',caps='Grey')
+#画箱型图 plot.box
+#ver 是否垂直摆放
+data.plot.box(vert=False,grid=True,color=color,figsize=(10,3))
+
+sta
+#标准差 
+a_std=sta.loc['std']
+b_std=stb.loc['std']
+#方差 data[].var()
+a_var=data['a'].var()
+b_var=data['b'].var()
+print("标准差：%.2f, %.2f" %(a_std,b_std))
+print('方差： %.2f, %.2f' %(a_var,b_var))
+
+#建立一个画布
+fig=plt.figure(figsize=(10,3))
+#设置一个子画面
+ax1=fig.add_subplot(1,2,1)
+#设置曲线
+data['a'].plot(kind='kde',style='k--',grid=True,title='a密度曲线')
+#设置参考线，然后选择一个标准差的参考线
+plt.axvline(sta.loc['50%'],color='r',linestyle='--',alpha=0.8)
+plt.axvline(sta.loc['50%']-a_std,color='b',linestyle='--',alpha=0.8)
+plt.axvline(sta.loc['50%']+a_std,color='b',linestyle='--',alpha=0.8)
+
+ax2=fig.add_subplot(1,2,2)
+data['b'].plot(kind='kde',style='--k',grid=True,title='b密度曲线')
+plt.axvline(stb.loc['50%'],color='r',linestyle='--',alpha=0.8)
+plt.axvline(stb.loc['50%']+b_std,color='b',linestyle='--',alpha=0.8)
+plt.axvline(stb.loc['50%']-b_std,color='b',linestyle='--',alpha=0.8)
