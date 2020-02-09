@@ -1,0 +1,29 @@
+#20/80定律
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+#创建数据
+data=pd.Series(np.random.rand(10)*1200+3000,index=list('abcdefghij'))
+print(data)
+
+#按照sort_values(ascending=)
+data.sort_values(ascending=False,inplace=True)
+print(data)
+
+plt.figure(figsize=(10,4))
+data.plot(kind='bar',color='g',alpha=0.5,width=0.7)
+plt.ylabel('income')
+#累计/总数 累计占比
+p=data.cumsum()/data.sum()
+#选择占比超过80%的索引
+key=p[p>0.8].index[0]
+print(key)
+#排序后的index变成key
+key_num=data.index.tolist().index(key)
+print(key_num)
+#引用次坐标轴 secondary_y
+p.plot(style='--ko',secondary_y=True)
+plt.axvline(key_num,color='r',linestyle='--')
+#添加坐标显示出累计百分比
+plt.text(key_num+0.2,p[key],'cumulative percent %.3f%%' %(p[key]*100),color='r')
