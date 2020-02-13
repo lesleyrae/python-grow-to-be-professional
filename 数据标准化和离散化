@@ -1,0 +1,77 @@
+'''
+【课程2.3】  数据归一化/标准化
+
+ 数据的标准化（normalization）是将数据按比例缩放，使之落入一个小的特定区间。
+ 在某些比较和评价的指标处理中经常会用到，去除数据的单位限制，将其转化为无量纲的纯数值，便于不同单位或量级的指标能够进行比较和加权
+ 
+最典型的就是数据的归一化处理，即将数据统一映射到[0,1]区间上
+
+0-1标准化 / Z-score标准化
+
+'''
+
+#0-1标准化
+df=pd.DataFrame({'value1':np.random.rand(10)*20,'value2':np.random.rand(10)*100})
+def data_norm(df,*cols):
+    #复制一个表
+    df_n=df.copy()
+    #对于每一列
+    for col in cols:
+        ma=df_n[col].max()
+        mi=df_n[col].min()
+        df_n[col+'_n']=(df_n[col]-mi)/(ma-mi)
+    return(df_n)
+
+df_n=data_norm(df,'value1','value2')
+print(df_n.head())
+#按照f进行潘旭
+df_z.sort_values(by='f',inplace=True,ascending=True)
+df_z['f'].plot(kind='line',style='--k',alpha=0.8,grid=True)
+
+# （2）Z-score标准化
+# Z分数（z-score）,是一个分数与平均数的差再除以标准差的过程 → z=(x-μ)/σ，其中x为某一具体分数，μ为平均数，σ为标准差
+# Z值的量代表着原始分数和母体平均值之间的距离，是以标准差为单位计算。在原始分数低于平均值时Z则为负数，反之则为正数
+# 数学意义：一个给定分数距离平均数多少个标准差?
+df = pd.DataFrame({"value1":np.random.rand(10) * 100,
+                  'value2':np.random.rand(10) * 100})
+def z_norm(df,*cols):
+    df_n=df.copy()
+    for col in cols:
+        u=df_n[col].mean()
+        st=df_n[col].std()
+        df_n[col+'_zn']=(df_n[col]-u)/st
+    return(df_n)
+
+df_z=z_norm(df,'value1','value2')
+print(df_z)
+
+【2.4】连续数据离散化
+（1）等宽法
+ages=[20,22,25,27,21,23,37,31,61,45,41,32]
+bins=[18,25,35,60,100]
+cats=pd.cut(ages,bins)
+print(cats)
+# 返回的是一个特殊的Categorical对象 → 一组表示面元名称的字符串
+print(cats.codes)
+print(cats.categories)
+#pd.value_counts 分类技术
+print(pd.value_counts(cats))
+group_names=['Youth','YoungAdult','MiddleAged','Senior']
+print(pd.cut(ages,bins,labels=group_names))
+df=pd.DataFrame({'age':ages})
+group_names=['Youth','YoungAdult','MiddleAged','Senior']
+s=pd.cut(df['age'],bins)
+df['label']=s
+print(df)
+#按照分类进行计数
+cut_counts=s.value_counts(sort=False)
+print(cut_counts)
+plt.scatter(df.index,df['age'],cmap='Blues',c=cats.codes)
+
+（2）#等频法——以相同的数量的记录放进区间
+data=np.random.randn(1000)*100
+s=pd.Series(data)
+#按照四分位分qcut(s,4)
+cats=pd.qcut(s,4)
+print(cats)
+plt.scatter(s.index,s,cmap = 'Greens',c = pd.qcut(data,4).codes)
