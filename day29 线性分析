@@ -1,0 +1,82 @@
+from sklearn.linear_model import LinearRegression
+#规定随机种子
+rng=np.random.RandomState(2)
+#输入x和y值
+xtrain=10* rng.rand(30)
+ytrain=8+4*xtrain+rng.rand(30)
+#画散点图
+fig=plt.figure(figsize=(12,3))
+ax1=fig.add_subplot(1,2,1)
+plt.scatter(xtrain,ytrain,marker='.',color='k')
+plt.grid()
+plt.title('scatter grapha')
+
+#构建模型 model=LinearRegression
+model=LinearRegression()
+#输入自变量和因变量 model.fit(x,y)
+model.fit(xtrain[:,np.newaxis],ytrain)
+#将x变成列变量x[:,np.newaxis]
+#显示出系数和截距
+print(model.coef_)
+print(model.intercept_)
+
+#拟合之后的先 规定所有的x参考范围
+xtest=np.linspace(0,10,1000)
+#拟合出y值 ytest=model.predict(x)
+ytest=model.predict(xtest[:,np.newaxis])
+ax1=fig.add_subplot(1,2,2)
+plt.scatter(xtest,ytest,color='r')
+plt.grid()
+plt.title('scatter grapha')
+
+#预测值的图
+plt.plot(xtest,ytest,color='r',linestyle='--')
+#现实值的图
+plt.scatter(xtrain,ytrain,marker='+',color='k')
+#用xtrain 预测的y值
+ytest2=model.predict(xtrain[:,np.newaxis])
+plt.scatter(xtrain,ytest2,marker='x',color='g')
+#画出预测值和现实值之间的差距
+plt.plot([xtrain,xtrain],[ytrain,ytest2],color='gray')
+
+2)多个元素的线性回归
+rng=np.random.RandomState(5)
+xtrain=10*rng.rand(150,4)
+ytrain=20+np.dot(xtrain,[1.5,2,-4,3])
+
+df=pd.DataFrame(xtrain,columns=['b1','b2','b3','b4'])
+df['y']=ytrain
+print(df.head())
+#相关性分析，看变量之间相互独立
+pd.plotting.scatter_matrix(df[['b1','b2','b3','b4']],figsize=(10,6),diagonal='kde',alpha=0.5,range_padding=0.1)
+
+model=LinearRegression()
+model.fit(df[['b1','b2','b3','b4']],df['y'])
+print(model.coef_)
+print(model.intercept_)
+
+3）求r方
+# 预测值和原始数据
+# r2 ssr（预测-原始）/sst（原始-均值）
+from sklearn import metrics
+rng=np.random.RandomState(2)
+#随机种子
+xtrain=10* rng.rand(30)
+ytrain=8+4*xtrain+rng.rand(30)
+model=LinearRegression()
+model.fit(xtrain[:,np.newaxis],ytrain)
+ytest=model.predict(xtrain[:,np.newaxis])
+# 原始值，预测值
+mse= metrics.mean_absolute_error(ytrain,ytest)
+rmse=np.sqrt(mse)
+print(mse)
+print(rmse)
+
+ssr=((ytest-ytrain.mean())**2).sum()
+sst=((ytrain-ytrain.mean())**2).sum()
+r2=ssr/sst
+print(r2)
+
+#用score方法就可以
+r22=model.score(xtrain[:,np.newaxis],ytrain)
+print(r22)
