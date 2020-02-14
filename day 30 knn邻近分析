@@ -36,6 +36,12 @@ print(iris.target_names)
 
 data=pd.DataFrame(iris.data,columns=iris.feature_names)
 
+#选出data 中target 以及target names作为栏
+ty=pd.DataFrame( {'target': [0,1,2], 'target_names': iris.target_names})
+# 使用data,ty 合并，在target 这一栏
+df=pd.merge(data,ty,on='target')
+print(df.head())
+
 knn=neighbors.KNeighborsClassifier()
 knn.fit(iris.data,df['target_names'])
 
