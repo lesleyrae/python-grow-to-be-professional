@@ -1,0 +1,44 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn import neighbors
+import warnings
+warnings.filterwarnings('ignore')
+
+data=pd.DataFrame({'name':['movie1','movie2','movie3','movie4','movie5','movie6'],'fight':[3,2,1,101,99,98],'kiss':[104,100,81,10,5,2],
+                   'type':['romance','romance','romance','action','action','action']})
+                   
+#画图 plt.scatter(data[data['c']=='a1']['b1'],data[data[data['c']=='a2']['b2'])
+plt.scatter(data[data['type']=='romance']['fight'],data[data['type']=='romance']['kiss'],color='r',marker='o',label='romance')
+plt.scatter(data[data['type']=='action']['fight'],data[data['type']=='action']['kiss'],color='b',marker='o',label='action')
+
+##knn聚类分析
+knn=neighbors.KNeighborsClassifier()
+#根据标准进行分类
+knn.fit(data[['fight','kiss']],data['type'])
+knn.predict([[18,90]])
+
+#设计随机数进行预测
+data2=pd.DataFrame(np.random.rand(100,2)*50,columns=['fight','kiss'])
+data2['typetest']=knn.predict(data2)
+data2.head()
+
+plt.scatter(data2[data2['typetest']=='romance']['fight'],data2[data2['typetest']=='romance']['kiss'],color='r',marker='o',label='romance')
+plt.scatter(data2[data2['typetest']=='action']['fight'],data2[data2['typetest']=='action']['kiss'],color='b',marker='o',label='action')
+
+3）引入数据包datasets
+
+from sklearn import datasets
+iris=datasets.load_iris()
+print(iris.keys())
+print(iris.feature_names)
+print(iris.target_names)
+
+data=pd.DataFrame(iris.data,columns=iris.feature_names)
+
+knn=neighbors.KNeighborsClassifier()
+knn.fit(iris.data,df['target_names'])
+
+pre_data=knn.predict([[0.2,0.1,0.3,0.4]])
+pre_data
+data['target']=iris.target
