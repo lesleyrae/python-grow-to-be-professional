@@ -1,0 +1,89 @@
+1.#pca分析
+#降维
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+（1）#2维数据设置
+rng=np.random.RandomState(8)
+data=np.dot(rng.rand(2,2),rng.randn(2,200)).T
+df=pd.DataFrame({'x1':data[:,0],'x2':data[:,1]})
+print(df.head())
+print(df.shape)
+
+from sklearn.decomposition import PCA
+#选择主成分个数
+pca=PCA(n_components=1)
+#模拟
+pca.fit(df)
+#特征值主成分数量
+print(pca.explained_variance_)
+print(pca.components_)
+print(pca.n_components_)
+#2.79-0.77*x1-0.63*x2
+
+#转换降维之后的数据
+x_pca=pca.transform(df)
+#返回原来的数据结构
+x_new=pca.inverse_transform(x_pca)
+plt.scatter(df['x1'],df['x2'],alpha=0.6,marker='.')
+plt.scatter(x_new[:,0],x_new[:,1],alpha=0.8,marker='.',color='r')
+plt.axis('equal')
+plt.grid()
+
+2）#d多维数据降维
+from sklearn.datasets import load_digits
+digits=load_digits()
+print(digits.keys())
+print(digits.data.shape)
+
+pca=PCA(n_components=2)
+projected=pca.fit_transform(digits.data)
+projected[:5]
+print(projected.shape)
+
+#主成分
+print(pca.explained_variance_)
+#向量
+print(pca.components_)
+print(pca.n_components_)
+
+plt.scatter(projected[:,0],projected[:,1],c=digits.target,edgecolor='none',alpha=0.5,cmap='Reds',s=5)
+#只有两个维度
+plt.colorbar()
+
+#主成分概念
+pca=PCA(n_components=10)
+projected=pca.fit_transform(digits.data)
+projected[:5]
+print(projected.shape)
+s=pca.explained_variance_
+#累计贡献率
+c_s=pd.DataFrame({'b':s,'b_sum':s.cumsum()/s.sum()})
+print(c_s)
+c_s['b_sum'].plot(style='--',color='k',figsize=(10,4))
+plt.axhline(0.85,color='r',linestyle='--',alpha=0.8)
+plt.grid()
+
+2.#k-means
+#空间聚集点
+#跟knn区别在于没有y值
+#不适合非线性边界
+#make_blobs 聚类生成器
+from sklearn.datasets.samples_generator import make_blobs
+x,y_true= make_blobs(n_samples=300, #300条数据
+                     centers=4, #四类数字
+                     cluster_std=0.5, # 方差一致
+                     random_state=0)
+plt.scatter(x[:,0],x[:,1],s=10,alpha=0.8)
+
+from sklearn.cluster import KMeans
+#有多少类
+kmeans=KMeans(n_clusters=4)
+kmeans.fit(x)
+y_kmeans=kmeans.predict(x)
+#中心点
+centriods=kmeans.cluster_centers_
+plt.scatter(x[:,0],x[:,1],c=y_kmeans,cmap='Dark2',s=50,alpha=0.5,marker='x')
+plt.scatter(centriods[:,0],centriods[:,1],c=[0,1,2,3],cmap='Dark2',s=70,alpha=0.5,marker='o',edgecolor='k')
+
