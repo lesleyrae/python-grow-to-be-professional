@@ -1,0 +1,936 @@
+import numpy as np
+import pandas as pd
+s=pd.Series(np.random.rand(5))
+print(s)
+# .index查看series索引，类型为rangeindex
+print(s.index)
+# .values查看series值，类型是ndarray
+print(s.values)
+
+# Series 创建方法一：由字典创建，字典的key就是index，values就是values
+dic={'a':1,'b':2,'c':3,'d':4,'e':5}
+s=pd.Series(dic)
+print(s)
+# Series 创建方法二：由数组创建(一维数组)
+arr=np.random.randn(5)
+s1=pd.Series(arr)
+print(s1)
+#设置自己的index
+s2 = pd.Series(arr, index = ['a','b','c','d','e'],dtype = np.object)
+print(s2)
+# Series 创建方法三：由标量创建
+s3 = pd.Series(10, index = range(4))
+print(s3)
+# Series 名称属性：name
+s2 = pd.Series(np.random.randn(5),name = 'test')
+print(s2)
+# .rename()重命名一个数组的名称，并且新指向一个数组，原数组不变
+s3=s2.rename('hahahh')
+print(s3)
+
+# 位置下标，类似序列
+s = pd.Series(np.random.rand(10))
+print(s[4])
+print(s[:4])
+print(s[:-1])
+# 标签索引
+s2 = pd.Series(np.random.rand(5), index = ['a','b','c','d','e'])
+print(s2['a'])
+sci=s2[['a','d','e']]
+print(sci)
+print(s2['a':'c'],s2['c'])
+print(s2[0:3],s2[3])
+print(s2[:-1])
+print(s2[::2])
+# 布尔型索引
+s3 = pd.Series(np.random.rand(3)*100)
+print(s3[s3>50])
+bs2=s.isnull()
+print(bs2)
+
+#数据查看
+s = pd.Series(np.random.rand(50))
+print(s.head(10))
+print(s.tail())
+# 重新索引reindex
+# .reindex将会根据索引重新排序，如果当前索引不存在，则引入缺失值
+# 这里'd'索引不存在，所以值为NaN
+s = pd.Series(np.random.rand(3), index = ['a','b','c'])
+s1=s.reindex(['c','n','m'])
+print(s1)
+# Series对齐
+s1 = pd.Series(np.random.rand(3), index = ['Jack','Marry','Tom'])
+s2 = pd.Series(np.random.rand(3), index = ['Wang','Jack','Marry'])
+print(s1+s2)
+# Series 和 ndarray 之间的主要区别是，Series 上的操作会根据标签自动对齐
+# index顺序不会影响数值计算，以标签来计算
+# 空值和任何值计算结果扔为空值
+# 删除：.drop
+s = pd.Series(np.random.rand(5), index = list('ngjur'))
+s1=s.drop('n')
+print(s1)
+#添加
+s2=s['a']=100
+print(s)
+# 通过.append方法，直接添加一个数组
+# .append方法生成一个新的数组，不改变之前的数组
+s3 = s.append(s2)
+print(s3)
+
+# Dataframe 数据结构
+# Dataframe是一个表格型的数据结构，“带有标签的二维数组”。
+# Dataframe带有index（行标签）和columns（列标签）
+data = {'name':['Jack','Tom','Mary'],
+        'age':[18,19,20],
+       'gender':['m','m','w']}
+frame = pd.DataFrame(data)
+print(frame)
+print(frame.index)
+print(frame.columns)
+print(frame.values)
+# Dataframe 创建方法一：由数组/list组成的字典
+
+# 创建方法:pandas.Dataframe()
+# 由数组/list组成的字典 创建Dataframe，columns为字典key，index为默认数字标签
+# 字典的值的长度必须保持一致！
+data1={'a':[1,2,3],'b':[2,3,4],'c':[3,4,5],'d':[4,5,6]}
+data2={'a1':np.random.rand(3),'b':np.random.randint(3)}
+df1=pd.DataFrame(data1,columns=['a','b','c','d'])
+df2=pd.DataFrame(data2,columns=['a1','b'])
+print(df1)
+print(df2)
+df3=pd.DataFrame(data1,columns=['a','b','c','e'])
+df4=pd.DataFrame(data2,columns=['a1','b','c'])
+print(df3)
+print(df4)
+# index参数：重新定义index，格式为list，长度必须保持一致
+df5=pd.DataFrame(data2,index=['e','f','g'])
+print(df5)
+
+# Dataframe 创建方法二：由Series组成的字典
+# 由Seris组成的字典 创建Dataframe，columns为字典key，index为Series的标签（如果Series没有指定标签，则是默认数字标签）
+# Series可以长度不一样，生成的Dataframe会出现NaN值
+data1={'one':pd.Series(np.random.rand(2),index=['a','b']),'two':pd.Series(np.random.rand(3),index=['a','b','c'])}
+df1=pd.DataFrame(data1)
+print(df1)
+
+# Dataframe 创建方法三：通过二维数组直接创建
+# 通过二维数组直接创建Dataframe，得到一样形状的结果数据，如果不指定index和columns，两者均返回默认数字格式
+# index和colunms指定长度与原数组保持一致
+data2=np.random.rand(9).reshape(3,3)
+df2=pd.DataFrame(data2,index=['a','b','c'],columns=['e','f','g'])
+print(df2)
+
+# Dataframe 创建方法四：由字典组成的列表
+# 由字典组成的列表创建Dataframe，columns为字典的key，index不做指定则为默认数组标签
+# colunms和index参数分别重新指定相应列及行标签
+data = [{'one': 1, 'two': 2}, {'one': 5, 'two': 10, 'three': 20}]
+df3=pd.DataFrame(data)
+df4=pd.DataFrame(data,index=['a','b'])
+df5=pd.DataFrame(data,columns=['one','two','three'])
+print(df3)
+print(df4)
+print(df5)
+
+# Dataframe 创建方法五：由字典组成的字典
+# columns参数可以增加和减少现有列，如出现新的列，值为NaN
+# index在这里和之前不同，并不能改变原有index，如果指向新的标签，值为NaN （非常重要！）
+data = {'Jack':{'math':90,'english':89,'art':78},
+       'Marry':{'math':82,'english':95,'art':92},
+       'Tom':{'math':78,'english':67}}
+df1=pd.DataFrame(data)
+df2 = pd.DataFrame(data, columns = ['Jack','Tom','Bob'])
+df3 = pd.DataFrame(data, index = ['a','b','c'])
+print(df1)
+
+'''
+【课程2.6】  Pandas数据结构Dataframe：索引
+
+Dataframe既有行索引也有列索引，可以被看做由Series组成的字典（共用一个索引）
+
+选择列 / 选择行 / 切片 / 布尔判断
+
+'''
+
+df=pd.DataFrame(np.random.rand(12).reshape(3,4)*100,index=['one','two','three'],columns=['a','b','c','d'])
+print(df)
+# 按照列名选择列，只选择一列输出Series，选择多列输出Dataframe
+print(df['a'])
+# 按照index选择行，只选择一行输出Series，选择多行输出Dataframe
+print(df.loc['one'])
+print(df.loc[['one','two']])
+print(df[:1])
+# 单个标签索引，返回Series
+print(df.loc['one'])
+print(df.loc[['one','two','three']])
+
+# df.iloc[] - 按照整数位置（从轴的0到length-1）选择行
+# 类似list的索引，其顺序就是dataframe的整数位置，从0开始计
+df = pd.DataFrame(np.random.rand(16).reshape(4,4)*100,
+                   index = ['one','two','three','four'],
+                   columns = ['a','b','c','d'])
+print(df)
+print(df.iloc[0])
+#第一行第三个
+print(df.iloc[0,2])
+#最后一行
+print(df.iloc[-1])
+#第二行-第四行
+print(df.iloc[1:3])
+# 末端不包含
+print(df.iloc[::2])
+#第四行、第三行、第二行
+print(df.iloc[[3,2,1]]
+
+# 布尔型索引
+# 和Series原理相同
+
+df = pd.DataFrame(np.random.rand(16).reshape(4,4)*100,
+                   index = ['one','two','three','four'],
+                   columns = ['a','b','c','d'])
+print(df[df<20])
+#筛选'a'>20的行数
+print(df[df['a']>20])
+#筛选'a','b'>50的行数
+print(df[df[['a','b']]>50])
+# 也可以书写为 df[df.loc[['one','three']] < 50]
+#筛选1，3行中<50的数
+# 索引结果保留 所有数据：True返回原数据，False返回值为NaN
+print(df[df.loc[['one','three']]<50])
+# 选择a列的one，three行
+print(df['a'].loc[['one','two']])
+## 选择满足判断索引的前两行数据
+#满足a<50的前两行
+print(df[df['a']<50].iloc[:2])
+
+'''
+【课程2.7】  Pandas数据结构Dataframe：基本技巧
+
+数据查看、转置 / 添加、修改、删除值 / 对齐 / 排序
+
+'''
+
+df = pd.DataFrame(np.random.rand(16).reshape(8,2)*100,
+                   columns = ['a','b'])
+print(df.head(2))
+print(df.tail())
+#转置
+print(df.T)
+# 添加与修改
+df = pd.DataFrame(np.random.rand(16).reshape(4,4)*100,
+                   columns = ['a','b','c','d'])
+# 新增列/行并赋值
+df['e']=10
+df.loc[4]=20
+print(df)
+# 删除  del / drop()
+del df['a']
+print(df)
+# drop()删除行，inplace=False → 删除后生成新的数据，不改变原数据
+print(df.drop(0))
+# 添加
+df1 = pd.DataFrame(np.random.randn(10, 4), columns=['A', 'B', 'C', 'D'])
+df2 = pd.DataFrame(np.random.randn(7, 3), columns=['A', 'B', 'C'])
+print(df1+df2)
+
+df1=pd.DataFrame(np.random.rand(16).reshape(4,4)*100,columns = ['a','b','c','d'])
+#按照a排序，升序
+print(df1.sort_values(['a'], ascending=True))
+print(df1.sort_values(['a'], ascending=False))
+df2 = pd.DataFrame({'a':[1,1,1,1,2,2,2,2],
+                  'b':list(range(8)),
+                  'c':list(range(8,0,-1))})
+#先按照a排序再按照c排序，升序
+print(df2.sort_values(['a','c'],ascending=True))
+
+# 排序2 - 索引排序 .sort_index
+df1 = pd.DataFrame(np.random.rand(16).reshape(4,4)*100,
+                  index = [5,4,3,2],
+                   columns = ['a','b','c','d'])
+df2 = pd.DataFrame(np.random.rand(16).reshape(4,4)*100,
+                  index = ['h','s','x','g'],
+                   columns = ['a','b','c','d'])
+#按照索引排序
+print(df1.sort_index())
+print(df2.sort_index())
+
+【2.8】datetime
+# datetime.date：date对象
+import datetime
+today=datetime.date.today()
+print(today)
+t=datetime.date(2014,9,30)
+print(t)
+# datetime.datetime：datetime对象
+now = datetime.datetime.now()
+print(now)
+print(str(now))
+# datetime.timedelta：时间差
+yestoday=today-datetime.timedelta(1)
+print(yestoday)
+yestoday1=today-datetime.timedelta(7)
+print(yestoday1)
+# parser.parse：日期字符串转换
+from dateutil.parser import parse
+# 直接将str转化成datetime.datetime
+date='12-21-2017'
+t=parse(date)
+print(t)
+
+'''
+【课程2.9】  Pandas时刻数据：Timestamp
+
+时刻数据代表时间点，是pandas的数据类型，是将值与时间点相关联的最基本类型的时间序列数据
+
+pandas.Timestamp()
+
+'''
+# pd.Timestamp()
+# 直接生成pandas的时刻数据 → 时间戳
+# 数据类型为 pandas的Timestamp
+date1 = datetime.datetime(2016,12,1,12,45,30)
+date2 = '2017-12-21'
+t1=pd.Timestamp(date1)
+t2=pd.Timestamp(date2)
+print(t1)
+print(t2)
+# pd.to_datetime()：如果是单个时间数据，转换成pandas的时刻数据，数据类型为Timestamp
+from datetime import to_datetime
+t3 = pd.to_datetime(date1)
+t4 = pd.to_datetime(date2)
+print(t3)
+print(t4)
+lst_date = [ '2017-12-21', '2017-12-22', '2017-12-23']
+t5=pd.to_datetime(lst_date)
+print(t5)
+
+date3 = ['2017-2-1','2017-2-2','2017-2-3','hello world!','2017-2-5','2017-2-6']
+# 当一组时间序列中夹杂其他格式数据，可用errors参数返回
+# errors = 'ignore':不可解析时返回原始输入，这里就是直接生成一般数组
+t3 = pd.to_datetime(date3, errors = 'ignore')
+print(t3,type(t3))
+# errors = 'coerce':不可扩展，缺失值返回NaT（Not a Time），结果认为DatetimeIndex
+t4 = pd.to_datetime(date3, errors = 'coerce')
+print(t4,type(t4))
+
+'''
+【课程2.10】  Pandas时间戳索引：DatetimeIndex
+
+核心：pd.date_range()
+
+'''
+# pd.DatetimeIndex()与TimeSeries时间序列
+rng = pd.DatetimeIndex(['12/1/2017','12/2/2017','12/3/2017','12/4/2017','12/5/2017'])
+print(rng,type(rng))
+print(rng[0],type(rng[0]))
+# pd.date_range()-日期范围：生成日期范围
+# 2种生成方式：①start + end； ②start/end + periods
+# 默认频率：day
+
+# 直接生成DatetimeIndex
+# pd.date_range(start=None, end=None, periods=None, freq='D', tz=None, normalize=False, name=None, closed=None, **kwargs)
+# start：开始时间
+# end：结束时间
+# periods：偏移量
+# freq：频率，默认天，pd.date_range()默认频率为日历日，pd.bdate_range()默认频率为工作日
+# tz：时区
+rng1 = pd.date_range('1/1/2017','1/10/2017', normalize=True)
+print(rng1,type(rng1))
+rng2=pd.date_range(start='1/1/2017',periods=10)
+print(rng2)
+rng3=pd.date_range(end='1/1/2017',periods=10)
+print(rng3)
+rng4 = pd.date_range(start = '1/1/2017 15:30', periods = 10, name = 'hello world!', normalize = True)
+print(rng4)
+# closed：默认为None的情况下，左闭右闭，left则左闭右开，right则左开右闭
+print(pd.date_range('1/1/2017','1/10/2017',closed='left'))
+# 直接转化为list，元素为Timestamp
+print(list(pd.date_range('1/1/2017','1/10/2017',closed='left')))
+# pd.date_range()-日期范围：频率(1)
+print(pd.date_range('2017/1/1','2017/1/4', freq = 'B')) #B：每工作日
+print(pd.date_range('2017/1/1','2017/1/4', freq = 'H')) # H：每小时
+print(pd.date_range('2017/1/1 12:00','2017/1/1 12:10', freq = 'T'))  # T/MIN：每分
+print(pd.date_range('2017/1/1','2017/2/1', freq = 'W-MON'))  # W-MON：从指定星期几开始算起，每周
+print(pd.date_range('2017/1/1','2017/2/1',freq='7D'))
+ts=pd.date_range('2016','2018',freq='2M')
+print(ts.shift(2))
+
+# pd.Period()创建时期
+# 生成一个以2017-01开始，月为频率的时间构造器
+p = pd.Period('2017', freq = 'M')
+print(p)
+print(p+2)
+print(p-8)
+# pd.period_range()创建时期范围
+prng = pd.period_range('1/1/2011', '1/1/2012', freq='M')
+print(prng,type(prng))
+ts = pd.Series(np.random.rand(len(prng)), index = prng)
+print(ts,type(ts))
+
+'''
+【课程2.14】  数值计算和统计基础
+
+常用数学、统计方法
+ 
+'''
+df = pd.DataFrame({'key1':[4,5,3,np.nan,2],
+                 'key2':[1,2,np.nan,4,5],
+                 'key3':[1,2,3,'j','k']},
+                 index = ['a','b','c','d','e'])
+print(df)
+# .mean()计算均值
+m1=df.mean()
+print(m1)
+#按照行计算均值
+m2 = df.mean(axis=1)
+print(m2)
+df = pd.DataFrame({'key1':np.arange(10),
+                  'key2':np.random.rand(10)*10})
+print(df)
+print(df.count())#'→ count统计非Na值的数量\n')
+print(df.min())# '→ min统计最小值\n',df['key2'].max(),'→ max统计最大值\n')
+print(df.quantile(q=0.75)) #→ quantile统计分位数，参数q确定位置\n')
+print(df.sum()) #'→ sum求和\n')
+print(df.median()) #'→ median求算数中位数，50%分位数\n')
+print(df.mean()) # '→ mean求平均值\n')
+print(df.std(),df.var()) #'→ std,var分别求标准差，方差\n') 
+print(df.skew()) #'→ skew样本的偏度\n')
+print(df.kurt()) #'→ kurt样本的峰度\n')
+print(df.cumsum()) #→ cumsum样本的累计和\n')
+print(df.cumprod()) #umprod样本的累计积\n'
+print(df.cummax())
+print(df.cummin())
+
+s=pd.Series(list('asdvasdcfgg'))
+# 得到一个唯一值数组
+sq=s.unique()
+print(sq)
+# 值计数：.value_counts()
+sc=s.value_counts(sort=False)
+print(sc)
+s = pd.Series(np.arange(10,15))
+df = pd.DataFrame({'key1':list('asdcbvasd'),
+                  'key2':np.arange(4,13)})
+print(s.isin([5,14]))
+
+'''
+【课程2.15】  文本数据
+
+Pandas针对字符串配备的一套方法，使其易于对数组的每个元素进行操作
+ 
+'''
+# 字符串常用方法（1） - lower，upper，len，startswith，endswith
+# 通过str访问，且自动排除丢失/ NA值
+
+s = pd.Series(['A','b','C','bbhello','123',np.nan,'hj'])
+df = pd.DataFrame({'key1':list('abcdef'),
+                  'key2':['hee','fv','w','hija','123',np.nan]})
+print(s.str.count('s'))
+print(df['key2'].str.upper())
+print(s.str.lower())
+print(s.str.upper())
+print(s.str.len())  #len字符长度\n')
+print(s.str.startswith('b')) #'→ 判断起始是否为a\n')
+print(s.str.endswith('3')) #'→ 判断结束是否为3\n')
+
+# 字符串常用方法（2） - strip
+s = pd.Series([' jack', 'jill ', ' jesse ', 'frank'])
+print(s.str.strip()) # 去除字符串中的空格
+print(s.str.lstrip()) # 去除字符串中的左空格
+print(s.str.rstrip())  # 去除字符串中的右空格
+
+# 这里去掉了columns的前后空格，但没有去掉中间空格
+df = pd.DataFrame(np.random.randn(3, 2), columns=[' Column A ', ' Column B '],
+                  index=range(3))
+df.columns=df.columns.str.strip()
+print(df)
+
+# 字符串常用方法（3） - replace
+df = pd.DataFrame(np.random.randn(3, 2), columns=[' Column A ', ' Column B '],
+                  index=range(3))
+# 替换
+df.columns = df.columns.str.replace(' ','-')
+print(df)
+df.columns = df.columns.str.replace('-','hehe',n=1)
+print(df)
+# 字符串常用方法（4） - split、rsplit
+s = pd.Series(['a,b,c','1,2,3',['a,,,c'],np.nan])
+# 类似字符串的split
+print(s.str.split(','))
+print(s.str.split(',')[0])
+print(s.str.split(',').str[0])
+print(s.str.split(',').str.get(1)) #每一行第一个
+print(s.str.split(',', expand=True))
+print(s.str.split(',', expand=True, n = 1))
+
+df = pd.DataFrame({'key1':['a,b,c','1,2,3',[':,., ']],
+                  'key2':['a-b-c','1-2-3',[':-.- ']]})
+print(df['key2'].str.split('-'))
+print(s.str[0])
+print(s.str[:2])
+
+'''
+【课程2.16】  合并 merge、join
+
+Pandas具有全功能的，高性能内存中连接操作，与SQL等关系数据库非常相似
+
+pd.merge(left, right, how='inner', on=None, left_on=None, right_on=None,
+         left_index=False, right_index=False, sort=True,
+         suffixes=('_x', '_y'), copy=True, indicator=False)
+ 
+'''# merge合并 → 类似excel的vlookup
+
+df1 = pd.DataFrame({'key': ['K0', 'K1', 'K2', 'K3'],
+                     'A': ['A0', 'A1', 'A2', 'A3'],
+                     'B': ['B0', 'B1', 'B2', 'B3']})
+df2 = pd.DataFrame({'key': ['K0', 'K1', 'K2', 'K3'],
+                      'C': ['C0', 'C1', 'C2', 'C3'],
+                      'D': ['D0', 'D1', 'D2', 'D3']})
+
+print(pd.merge(df1,df2,on='key'))
+print(pd.merge(df3,df4,on=['key1','key2']))
+
+# 参数how → 合并方式
+df3 = pd.DataFrame({'key1': ['K0', 'K0', 'K1', 'K2'],
+                    'key2': ['K0', 'K1', 'K0', 'K1'],
+                    'A': ['A0', 'A1', 'A2', 'A3'],
+                    'B': ['B0', 'B1', 'B2', 'B3']})
+df4 = pd.DataFrame({'key1': ['K0', 'K1', 'K1', 'K2'],
+                    'key2': ['K0', 'K0', 'K0', 'K0'],
+                    'C': ['C0', 'C1', 'C2', 'C3'],
+                    'D': ['D0', 'D1', 'D2', 'D3']})
+print(pd.merge(df3, df4,on=['key1','key2'], how = 'inner'))  # inner：默认，取交集
+print(pd.merge(df3, df4, on=['key1','key2'], how = 'outer'))   # outer：取并集，数据缺失范围NaN
+print(pd.merge(df3, df4, on=['key1','key2'], how = 'left'))   # left：按照df3为参考合并，数据缺失范围NaN
+print(pd.merge(df3, df4, on=['key1','key2'], how = 'right'))  # right：按照df4为参考合并，数据缺失范围NaN
+
+df1 = pd.DataFrame({'lkey':list('bbacaab'),
+                   'data1':range(7)})
+df2 = pd.DataFrame({'rkey':list('abd'),
+                   'date2':range(3)})
+print(pd.merge(df1, df2, left_on='lkey', right_on='rkey'))
+print('------')
+# df1以‘lkey’为键，df2以‘rkey’为键
+
+df1 = pd.DataFrame({'key':list('abcdfeg'),
+                   'data1':range(7)})
+df2 = pd.DataFrame({'date2':range(100,105)},
+                  index = list('abcde'))
+print(pd.merge(df1, df2, left_on='key', right_index=True))
+# df1以‘key’为键，df2以index为键
+# left_index：为True时，第一个df以index为键，默认False
+# right_index：为True时，第二个df以index为键，默认False
+# 参数 sort
+
+df1 = pd.DataFrame({'key':list('bbacaab'),
+                   'data1':[1,3,2,4,5,9,7]})
+df2 = pd.DataFrame({'key':list('abd'),
+                   'date2':[11,2,33]})
+x1 = pd.merge(df1,df2, on = 'key', how = 'outer')
+x2 = pd.merge(df1,df2, on = 'key', sort=True, how = 'outer')
+print(x1)
+print(x2)
+print(x2.sort_values('data1'))
+
+#pd.join() → 直接通过索引链接
+# 等价于：pd.merge(left, right, left_index=True, right_index=True, how='outer')
+left = pd.DataFrame({'A': ['A0', 'A1', 'A2'],
+                     'B': ['B0', 'B1', 'B2']},
+                    index=['K0', 'K1', 'K2'])
+right = pd.DataFrame({'C': ['C0', 'C2', 'C3'],
+                      'D': ['D0', 'D2', 'D3']},
+                     index=['K0', 'K2', 'K3'])
+print(left.join(right))
+print(left.join(right, how='outer'))  
+
+df1 = pd.DataFrame({'key':list('bbacaab'),
+                   'data1':[1,3,2,4,5,9,7]})
+df2 = pd.DataFrame({'key':list('abd'),
+                   'date2':[11,2,33]})
+#
+print(pd.merge(df1, df2, left_index=True, right_index=True, suffixes=('_1', '_2')))  
+#链接两个表
+print(df1.join(df2['date2']))
+
+left = pd.DataFrame({'A': ['A0', 'A1', 'A2', 'A3'],
+                     'B': ['B0', 'B1', 'B2', 'B3'],
+                     'key': ['K0', 'K1', 'K0', 'K1']})
+right = pd.DataFrame({'C': ['C0', 'C1'],
+                      'D': ['D0', 'D1']},
+                     index=['K0', 'K1'])
+print(left.join(right, on = 'key'))
+
+'''
+【课程2.17】  连接与修补 concat、combine_first
+
+连接 - 沿轴执行连接操作
+
+pd.concat(objs, axis=0, join='outer', join_axes=None, ignore_index=False,
+          keys=None, levels=None, names=None, verify_integrity=False,
+          copy=True)
+ 
+'''# 连接：concat
+
+s1 = pd.Series([1,2,3])
+s2 = pd.Series([2,3,4])
+s3 = pd.Series([1,2,3],index = ['a','c','h'])
+s4 = pd.Series([2,3,4],index = ['b','e','d'])
+print(pd.concat([s1,s2]))
+print(pd.concat([s3,s4]).sort_index())
+print(pd.concat([s3,s4], axis=1))
+# 连接方式：join，join_axes
+
+s5 = pd.Series([1,2,3],index = ['a','b','c'])
+s6 = pd.Series([2,3,4],index = ['b','c','d'])
+print(pd.concat([s5,s6], axis= 1, join='inner'))
+print(pd.concat([s5,s6], axis= 1, join_axes=[['a','b','d']]))
+# join：{'inner'，'outer'}，默认为“outer”。如何处理其他轴上的索引。outer为联合和inner为交集。
+# join_axes：指定联合的index
+
+# 覆盖列名
+sre = pd.concat([s5,s6], keys = ['one','two'])
+print(sre,type(sre))
+print(sre.index)
+sre = pd.concat([s5,s6], axis=1, keys = ['one','two'])
+print(sre,type(sre))
+# axis = 1, 覆盖列名
+print(df1.combine_first(df2))
+# 根据index，df1的空值被df2替代
+df1.update(df2)
+print(df1)
+# update，直接df2覆盖df1，相同index位置
+
+'''
+【课程2.18】  去重及替换
+
+.duplicated / .replace
+ 
+'''
+# 去重 .duplicated
+
+s = pd.Series([1,1,1,1,2,2,2,3,4,5,5,5,5])
+print(s.duplicated())
+print(s[s.duplicated() == False])
+
+s_re = s.drop_duplicates()
+print(s_re)
+# drop.duplicates移除重复
+# inplace参数：是否替换原值，默认False
+df = pd.DataFrame({'key1':['a','a',3,4,5],
+                  'key2':['a','a','b','b','c']})
+print(df.duplicated())
+print(df['key2'].duplicated())
+
+# 替换 .replace
+
+s = pd.Series(list('ascaazsd'))
+print(s.replace('a', np.nan))
+print(s.replace(['a','s'] ,np.nan))
+print(s.replace({'a':'hello world!','s':123}))
+# 可一次性替换一个值或多个值
+# 可传入列表或字典
+
+'''
+【课程2.19】  数据分组
+
+分组统计 - groupby功能
+
+① 根据某些条件将数据拆分成组
+② 对每个组独立应用函数
+③ 将结果合并到一个数据结构中
+
+Dataframe在行（axis=0）或列（axis=1）上进行分组，将一个函数应用到各个分组并产生一个新值，然后函数执行结果被合并到最终的结果对象中。
+
+df.groupby(by=None, axis=0, level=None, as_index=True, sort=True, group_keys=True, squeeze=False, **kwargs)
+ 
+'''
+
+df = pd.DataFrame({'A' : ['foo', 'bar', 'foo', 'bar','foo', 'bar', 'foo', 'foo'],
+                   'B' : ['one', 'one', 'two', 'three', 'two', 'two', 'one', 'three'],
+                   'C' : np.random.randn(8),
+                   'D' : np.random.randn(8)})
+print(df.groupby('A'))
+print(df.groupby('A').mean())
+print(df.groupby(['A','B']).mean())
+c = df.groupby(['A'])['D'].mean()  # 以A分组，算D的平均值
+print(c)
+
+# 多函数计算：agg()
+
+df = pd.DataFrame({'a':[1,1,2,2],
+                  'b':np.random.rand(4),
+                  'c':np.random.rand(4),
+                  'd':np.random.rand(4),})
+print(df)
+print(df.groupby('a').agg(['mean',np.sum]))
+print(df.groupby('a')['b'].agg({'result1':np.mean,
+                               'result2':np.sum}))
+# 函数写法可以用str，或者np.方法
+# 可以通过list，dict传入，当用dict时，key名为columns
+
+'''
+【课程2.20】  分组转换及一般性“拆分-应用-合并”
+
+transform / apply
+ 
+'''
+# 数据分组转换,transform
+
+df = pd.DataFrame({'data1':np.random.rand(5),
+                  'data2':np.random.rand(5),
+                  'key1':list('aabba'),
+                  'key2':['one','two','one','two','one']})
+k_mean = df.groupby('key1').mean()
+print(pd.merge(df,k_mean,left_on='key1',right_index=True).add_prefix('mean_'))  # .add_prefix('mean_')：添加前缀
+print(df.groupby('key2').mean()) # 按照key2分组求均值
+print(df.groupby('key2').transform(np.mean))
+# data1、data2每个位置元素取对应分组列的均值
+# 字符串不能进行计算
+
+# 一般化Groupby方法：apply
+
+df = pd.DataFrame({'data1':np.random.rand(5),
+                  'data2':np.random.rand(5),
+                  'key1':list('aabba'),
+                  'key2':['one','two','one','two','one']})
+
+print(df.groupby('key1').apply(lambda x: x.describe()))
+# apply直接运行其中的函数
+# 这里为匿名函数，直接描述分组后的统计量
+
+'''
+【课程2.21】  透视表及交叉表
+
+类似excel数据透视 - pivot table / crosstab
+ 
+'''
+# data：DataFrame对象
+# values：要聚合的列或列的列表
+# index：数据透视表的index，从原数据的列中筛选
+# columns：数据透视表的columns，从原数据的列中筛选
+# aggfunc：用于聚合的函数，默认为numpy.mean，支持numpy计算方法
+date = ['2017-5-1','2017-5-2','2017-5-3']*3
+rng = pd.to_datetime(date)
+df = pd.DataFrame({'date':rng,
+                   'key':list('abcdabcda'),
+                  'values':np.random.rand(9)*10})
+print(pd.pivot_table(df, values = 'values', index = 'date', columns = 'key', aggfunc=np.sum))  # 也可以写 aggfunc='sum'
+
+# 交叉表：crosstab
+# 默认情况下，crosstab计算因子的频率表，比如用于str的数据透视分析
+# pd.crosstab(index, columns, values=None, rownames=None, colnames=None, aggfunc=None, margins=False, dropna=True, normalize=False)
+
+df = pd.DataFrame({'A': [1, 2, 2, 2, 2],
+                   'B': [3, 3, 4, 4, 4],
+                   'C': [1, 1, np.nan, 1, 1]})
+print(pd.crosstab(df['A'],df['B']))
+print('-----')
+print(pd.crosstab(df['A'],df['B'],normalize=True))
+print('-----')
+# normalize：默认False，将所有值除以值的总和进行归一化 → 为True时候显示百分比
+
+'''
+【课程2.22】  数据读取
+
+核心：read_table, read_csv, read_excel
+ 
+'''# 读取普通分隔数据：read_table
+# 可以读取txt，csv
+
+import os
+os.chdir('C:/Users/Hjx/Desktop/')
+
+data1 = pd.read_table('data1.txt', delimiter=',',header = 0, index_col=1)
+print(data1)
+# delimiter：用于拆分的字符，也可以用sep：sep = ','
+# header：用做列名的序号，默认为0（第一行）
+# index_col：指定某列为行索引，否则自动索引0, 1, .....
+
+# read_table主要用于读取简单的数据，txt/csv
+
+# 读取csv数据：read_csv
+# 先熟悉一下excel怎么导出csv
+
+data2 = pd.read_csv('data2.csv',engine = 'python')
+print(data2.head())
+# engine：使用的分析引擎。可以选择C或者是python。C引擎快但是Python引擎功能更加完备。
+# encoding：指定字符集类型，即编码，通常指定为'utf-8'
+
+# 大多数情况先将excel导出csv，再读取
+
+# 读取excel数据：read_excel
+
+data3 = pd.read_excel('地市级党委书记数据库（2000-10）.xlsx',sheetname='中国人民共和国地市级党委书记数据库（2000-10）',header=0)
+print(data3)
+# io ：文件路径。
+# sheetname：返回多表使用sheetname=[0,1],若sheetname=None是返回全表 → ① int/string 返回的是dataframe ②而none和list返回的是dict
+# header：指定列名行，默认0，即取第一行
+# index_col：指定列为索引列，也可以使用u”strings”
+
+【作业】
+dic = {'Jack':90,'Tom':89,'Marry':92,'Zack':65}
+ar = np.array([90,89,92,76])
+print(pd.Series(dic,name='work1'))
+print(pd.Series(ar,index=['jack','tom','marry','zack']))
+
+c=pd.Series(np.random.rand(10)*100,index=list('abcdefghij'))
+print(c['b'])
+print(c['c'])
+print(c[3:6])
+print(c[c>50])
+
+s1=pd.Series(np.random.rand(5)*10)
+s2=pd.Series(np.random.rand(5)*10)
+print(s1+s2)
+
+s=pd.DataFrame(np.random.rand(16).reshape(4,4)*100,index=['1','2','3','4'],columns=['a','b','c','d'])
+print(s['b'])
+print(s['c'])
+print(s[2:4])
+print(s[s>50])
+
+df=pd.DataFrame(np.random.rand(9).reshape(3,3)*100,index=['a','b','c'],columns=['v1','v2','v3'])
+print(df.sort_index(ascending=True))
+print(df.sort_values(['v2'],ascending=False))
+
+df=pd.DataFrame(np.random.rand(5,2)*100,index=['a','b','c','d','e'],columns=['v1','v2'])
+df=df.T
+print(df.drop('e',axis=1))
+
+import datetime
+a=datetime(2000,1,7)
+b=a-datetime.timedelta(1000)
+print(b)
+
+# 作业1：请通过迭代创建一个时间列表（如图，时间区间为任意一个月，这里可以用for语句），然后转化成DatetimeIndex，并print月中是多少号
+timelist=[]
+#转换成大特 timeindex
+for i in range(1,32):
+    timelist.append('2019-12-%i' %i)
+print(timelist)
+print(pd.to_datetime(timelist))
+
+# 作业2：请如图创建一个包含时间日期的txt文件，通过open语句读取后转化成DatetimeIndex
+f=open('',r)
+s=f.readline()
+datelist=s.split(',')
+print(pd.to_datetime(datelist))
+
+ts1=pd.DataFrame(np.random.rand(5),index=pd.date_range('20170101',periods=5))
+ts2=pd.DataFrame(np.random.rand(4),index=pd.date_range('20170131',''freq='3,'))
+ts3=ts2.asfreq('5t','ffill')
+
+ts4=pd.DataFrame(np.random.rand(10,3),index=pd.date_range('20171201',periods=10,freq='12h'),columns=['v1','v2','v3'])
+print(ts4)
+print(ts4[:3])
+print(ts4.loc)
+
+# 作业1：按要求创建时间序列ts1，通过降采样和升采样，转换成ts2，ts3
+
+ts1 = pd.Series(np.random.rand(10),
+              index = pd.date_range('20170101',periods = 10, freq = 'D'))
+ts2=ts1.resample('3d').mean()
+ts3=ts1.resample('12h').ffill()
+
+df = pd.DataFrame(np.random.rand(5,2)*100,
+                 columns = ['key1','key2'])
+print(df)
+print(df['key1'][2])
+print(df['key1'].cumsum())
+print(df['key1'].mean())
+print(df['key1'].median())
+
+def f(s):
+    s2=s.unique()
+    if len(s2)==len(s):
+        print('yes')
+    else:
+        print('no')
+
+df = pd.DataFrame({'name':['jack','tom','Marry','zack','heheda'],
+                  'gender':['M ','M','   F','  M ','  F'],
+                  'score':['90-92-89','89-78-88','90-92-95','78-88-76','60-60-67']})
+print(df['name'].str.capitalize())
+print(df['gender'].str.strip())
+print(df['score'].str.split('-'))
+
+# 作业1：按要求创建Dataframe df1、df2，并合并成df3
+
+df1 = pd.DataFrame({'key':['a','b','c'],
+                   'values1':np.random.rand(3)})
+df2 = pd.DataFrame({'key':['b','c','d'],
+                   'values2':np.random.rand(3)})
+
+df3=pd.merge(df1,df2,on='key',how='outer')
+
+df4 = pd.DataFrame({'lkey':['a','b','c'],
+                   'values1':np.random.rand(3)})
+df5 = pd.DataFrame({'rkey':['b','c','d'],
+                   'values2':np.random.rand(3)})
+
+df6 = pd.merge(df4,df5,left_on='lkey',right_on='rkey',how='left')
+
+print(df3)
+print(df6)
+
+df1 = pd.DataFrame(np.random.rand(4,2),
+                  index = list('abcd'),
+                  columns = ['values1','values2'])
+df2 = pd.DataFrame(np.random.rand(4,2),
+                  index = list('efgh'),
+                  columns = ['values1','values2'])
+print(pd.concat([df1,df2]))
+
+# 作业2：按要求创建Dataframe df1、df2，并用df2的值修补df1，生成df3
+df1 = pd.DataFrame(np.random.rand(4,2),
+                  index = list('abcd'),
+                  columns = ['values1','values2'])
+df1['values1'].loc[['b','c']] = np.nan
+df2 = pd.DataFrame(np.arange(8).reshape(4,2),
+                  index = list('abcd'),
+                  columns = ['values1','values2'])
+df3=df1.combine_first(df2)
+
+# 作业1：按要求创建Dataframe df，并通过分组得到以下结果
+# ① 以A分组，求出C,D的分组平均值
+# ② 以A,B分组，求出D,E的分组求和
+# ③ 以A分组，得到所有分组，以字典显示
+# ④ 按照数值类型分组，求和
+# ⑤ 将C,D作为一组分出来，并计算求和
+# ⑥ 以B分组，求出每组的均值，求和，最大值，最小值
+df = pd.DataFrame({'A' : ['one', 'two', 'three', 'one','two', 'three', 'one', 'two'],
+                   'B' : ['h', 'h', 'h', 'h', 'f', 'f', 'f', 'f'],
+                   'C' : np.arange(10,26,2),
+                   'D' : np.random.randn(8),
+                   'E':np.random.rand(8)})
+
+df1=df.groupby('A')['C','D'].mean()
+df2=df.groupby('A')['C','D'].sum()
+df3=df.groupby('A').groups
+df4=df.groupby(df.dtypes,axis=1).sum()
+df5=df.groupby({'C':'r','D':'r'},axis=1).sum()
+df6=df.groupby('B').describe()
+df6=df.groupby('B').agg([np.mean,np.sum,np.max,np.min])
+
+# 作业1：按要求创建Dataframe df，通过key分组求和，并将求和结果并在原df中
+df = pd.DataFrame({'data1':np.random.rand(8),
+                  'data2':np.random.rand(8),
+                  'key':list('aabbabab')})
+df1=df.groupby('key').transform(np.mean)
+print(df1)
+
+# 作业1：按要求创建Dataframe df，并通过数据透视表得到以下结果
+# ① 以A列聚合，求出C,D的平均值
+# ② 以A,B列聚合，求出D,E的均值、求和
+# ③ 以B聚合，计算A列的元素频率
+df = pd.DataFrame({'A' : ['one', 'two', 'three', 'one','two', 'three', 'one', 'two'],
+                   'B' : ['h', 'h', 'h', 'h', 'f', 'f', 'f', 'f'],
+                   'C' : np.arange(10,26,2),
+                   'D' : np.random.randn(8),
+                   'E':np.random.rand(8)})
+
+df1=pd.pivot_table(df,values=['C','D'],index='A',aggfunc=np.mean)
+df2=pd.pivot_table(df,values=['D','E'],index=['A','B'],aggfunc=[np.mean,np.sum])
+df3=pd.crosstab(df['B'],df['A'])
+print(df3)
+
