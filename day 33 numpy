@@ -1,0 +1,115 @@
+import numpy as np
+# 创建数组：arange()，类似range()，在给定间隔内返回均匀间隔的值。
+print(np.arange(5.0,12,2))  
+# 创建数组：linspace():返回在间隔[开始，停止]上计算的num个均匀间隔的样本。
+ar2 = np.linspace(2.0, 3.0, num=5, endpoint=False)
+# numpy.zeros(shape, dtype=float, order='C'):返回给定形状和类型的新数组，用零填充。
+ar3 = np.zeros((2,2), dtype = np.int)
+ar4 = np.array([list(range(5)),list(range(5,10))])
+ar5 = np.zeros_like(ar4)
+print(ar2)
+print(ar3)
+print(ar5)
+
+# 创建数组：eye()
+print(np.eye(5))
+# 创建一个正方的N*N的单位矩阵，对角线值为1，其余为0
+
+at1 = np.arange(10)
+at2 = np.ones((5,2))
+#t转置
+# numpy.reshape(a, newshape, order='C')：为数组提供新形状，而不更改其数据，所以元素数量需要一致！！
+at3=at1.reshape(2,5)
+print(at3)
+# numpy.resize(a, new_shape)：返回具有指定形状的新数组，如有必要可重复填充所需数量的元素。
+ar6 = np.resize(at1,(3,4))
+print(ar6)
+
+#数组复制
+ar1=np.arange(10)
+ar3=ar1.copy()
+# 数组类型转换：.astype()
+# 注意：养成好习惯，数组类型用np.int32，而不是直接int32
+ar1=np.arange(10)
+ar2=ar1.astype(np.int32)
+print(ar2.dtype)
+#数据堆积
+# numpy.stack(arrays, axis=0)：沿着新轴连接数组的序列，形状必须一样！
+# 重点解释axis参数的意思，假设两个数组[1 2 3]和[4 5 6]，shape均为(3,0)
+# axis=0：[[1 2 3] [4 5 6]]，shape为(2,3)
+# axis=1：[[1 4] [2 5] [3 6]]，shape为(3,2)
+a=np.arange(5)
+b=np.arange(5,9)
+ar1=np.hstack((a,b))
+print(ar1)
+c=np.arange(5)
+d=np.arange(5,10)
+ar2=np.vstack((c,d))
+print(ar2)
+# numpy.hsplit(ary, indices_or_sections)：将数组水平（逐列）拆分为多个子数组 → 按列拆分
+# 输出结果为列表，列表中元素为数组
+ar=np.arange(16).reshape(4,4)
+ar1=np.hsplit(ar,2)
+print(ar1)
+# numpy.vsplit(ary, indices_or_sections)：:将数组垂直（行方向）拆分为多个子数组 → 按行拆
+ar2 = np.vsplit(ar,4)
+print(ar2,type(ar2))
+# 数组简单运算
+
+ar = np.arange(6).reshape(2,3)
+print(ar + 10)   # 加法
+print(ar * 2)   # 乘法
+print(1 / (ar+1))  # 除法
+print(ar ** 0.5)  # 幂
+# 与标量的运算
+print(ar.mean())  # 求平均值
+print(ar.max())  # 求最大值
+print(ar.min())  # 求最小值
+print(ar.std())  # 求标准差
+print(ar.var())  # 求方差
+print(ar.sum(), np.sum(ar,axis = 0))  # 求和，np.sum() → axis为0，按列求和；axis为1，按行求和
+print(np.sort(np.array([1,4,3,2,5,6])))  # 排序
+
+ar=np.arange(20)
+print(ar[4:7])
+ar2=np.arange(16).reshape(4,4)
+print(ar2[2])
+print(ar2[2][3])
+print(ar2[2,2])
+print(ar2[:2,:3])
+# 切片数组中的1,2行、2,3列 → 二维数组
+
+#随机数
+# 生成一个标准正太分布的4*4样本值
+samples=np.random.normal(size=(4,4))
+print(samples)
+# numpy.random.rand(d0, d1, ..., dn)：生成一个[0,1)之间的随机浮点数或N维浮点数组 —— 均匀分布
+a=np.random.rand()
+b=np.random.rand(4)
+c=np.random.rand(2,3)
+#  numpy.random.randn(d0, d1, ..., dn)：生成一个浮点数或N维浮点数组 —— 正态分布
+samples1=np.random.randn(1000)
+# numpy.random.randint(low, high=None, size=None, dtype='l')：生成一个整数或N维整数数组
+print(np.random.randint(2))
+# low=2：生成1个[0,2)之间随机整数  
+print(np.random.randint(2,6,(2,3)))
+# low=2,high=6,size=(2,3)：生成一个2*3整数数组,取值范围：[2,6)随机整数  
+
+#存储数据
+# 存储数组数据 .npy文件
+import os
+os.chdir('/Users/rae616188919')
+ar=np.random.rand(5,5)
+print(ar)
+np.save('leiyanzhen.npy',ar)
+# 读取数组数据 .npy文件
+ar_load=np.load('leiyanzhen.npy')
+print(ar_load)
+
+# 存储/读取文本文件
+ar=np.random.rand(5,5)
+# np.savetxt(fname, X, fmt='%.18e', delimiter=' ', newline='\n', header='', footer='', comments='# ')：存储为文本txt文件
+np.savetxt('array.txt',ar,delimiter=',')
+# 也可以直接 np.loadtxt('C:/Users/Hjx/Desktop/array.txt')
+ar_loadtxt=np.loadtxt('array.txt',delimiter=',')
+print(ar_loadtxt)
