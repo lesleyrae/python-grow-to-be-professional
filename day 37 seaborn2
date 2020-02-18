@@ -236,3 +236,30 @@ cmap = sns.diverging_palette(220, 10, as_cmap=True)
 sns.heatmap(corr, mask=mask, cmap=cmap, vmax=.3, center=0,
             square=True, linewidths=0.2)
 # 生成半边热图
+
+'''
+【课程2.11】  结构化图表可视化
+
+FacetGrid()
+
+'''
+# 创建一个绘图表格区域，设置好row、col并分组
+g=sns.FacetGrid(tips,col='time',row='smoker')
+# 以total_bill字段数据分别做直方图统计
+g.map(plt.hist,'total_bill',alpha=0.5,color='r',bins=10)
+
+g=sns.FacetGrid(tips,col='day',size=4,aspect=0.5)
+g.map(plt.hist,'total_bill',bins=10,histtype='step',color='k')
+  #'bar', 'barstacked', 'step', 'stepfilled'
+  
+  g=sns.FacetGrid(tips,col='smoker',row='time')
+ # share{x,y} → 设置x、y数据
+g.map(plt.scatter,"total_bill",'tip',edgecolor='w',s=40,linewidth=1)
+# 设置点大小，描边宽度及颜色
+
+g=sns.FacetGrid(tips,col='time',hue='smoker')
+g.map(plt.scatter,'total_bill','tip',edgecolor='w',linewidth=1)
+
+attend=pd.read_csv('/Users/rae616188919/Desktop/seaborn-data-master/attention.csv')
+g=sns.FacetGrid(attend,col='subject',col_wrap=5,size=1.5)   # 设置每行的图表数量
+g.map(plt.plot,'solutions','score',marker='o',color='gray',linewidth=2)
