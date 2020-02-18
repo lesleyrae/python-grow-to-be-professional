@@ -1,0 +1,238 @@
+'''
+【课程2.6】  分类数据可视化 - 分类散点图
+
+stripplot() / swarmplot()
+
+'''
+
+# 1、stripplot()
+# 按照不同类别对样本数据进行分布散点图绘制
+tips=pd.read_csv('/Users/rae616188919/Desktop/seaborn-data-master/tips.csv')
+sns.stripplot(x='day',  # x → 设置分组统计字段
+              y='total_bill', # y → 数据分布统计字段
+               # 这里xy数据对调，将会使得散点图横向分布
+              data=tips, # data → 对应数据
+              jitter=True, # jitter → 当点数据重合较多时，用该参数做一些调整，也可以设置间距如：jitter = 0.1
+              size=5,edgecolor='w',
+              linewidth=1,marker='o' # 设置点的大小、描边颜色或宽度、点样式
+             )
+
+# 1、stripplot()
+# 通过hue参数再分类
+
+sns.stripplot(x='sex',y='total_bill',hue='day',data=tips,jitter=True)
+
+sns.stripplot(x='sex',y='total_bill',hue='day',data=tips,jitter=True,
+              palette='Set2',# 设置调色盘
+             dodge=True  # 是否拆分
+             )
+# order → 筛选类别
+sns.stripplot(x='day',y='total_bill',data=tips,jitter=True,order=['Sat','Sun'])
+# 筛选分类类别
+# 查看day字段的唯一值
+print(tips['day'].value_counts())
+
+2、swarmplot()
+# 分簇散点图
+sns.swarmplot(x='total_bill',y='day',data=tips,size=5,edgecolor='w',
+             linewidth=1,marker='o',palette='Reds')
+             
+'''
+【课程2.7】  分类数据可视化 - 分布图
+
+boxplot() / violinplot() / lvplot()
+
+'''
+# 1、boxplot()
+# 箱型图
+# 绘制箱型图
+sns.boxplot(x='day',y='total_bill',data=tips,linewidth=2,width=0.8,
+        fliersize=3,# 异常点大小
+         palette='hls',
+         whis=1.5,# 设置IQR 
+         notch=True, # 设置是否以中值做凹槽
+         order=['Thur','Fri','Sat','Sun']# 筛选类别
+        )
+# 可以添加散点图
+sns.swarmplot(x='day',y='total_bill',data=tips,color='k',size=3,alpha=0.8)
+
+sns.boxplot(x='day',y='total_bill',data=tips,hue='smoker',palette='Reds')
+sns.swarmplot(x='day',y='total_bill',data=tips,palette='Reds')
+
+# 2、violinplot()
+# 小提琴图
+sns.violinplot(x='day',y='total_bill',data=tips,
+               linewidth=2,
+              width=0.8,palette='hls',
+              order=['Thur','Fri','Sat','Sun'],
+              scale='area', # 测度小提琴图的宽度：area-面积相同，count-按照样本数量决定宽度，width-宽度一样
+              gridsize=50, # 设置小提琴图边线的平滑度，越高越平滑
+              inner='box', # 设置内部显示类型 → “box”, “quartile”, “point”, “stick”, None
+              bw=0.8 # 控制拟合程度，一般可以不设置
+              )
+
+# 通过hue参数再分类
+sns.violinplot(x='day',y='total_bill',data=tips,
+              hue='smoker',
+              palette='muted',
+              split=True, # 设置是否拆分小提琴图
+              inner='quartile')
+              
+sns.violinplot(x='day',y='total_bill',data=tips,palette='hls',inner=None)
+sns.swarmplot(x='day',y='total_bill',data=tips, color='w',alpha=0.5)
+
+# 3、lvplot()
+# LV图表
+sns.lvplot(x='day',y='total_bill',data=tips,palette='mako',
+          #hue='smoker'
+           scale='area', # 设置框的大小 → “linear”、“exonential”、“area”
+          k_depth='proportion'# 设置框的数量 → “proportion”、“tukey”、“trustworthy”
+          )
+sns.swarmplot(x='day',y='total_bill',data=tips,color='w')
+
+'''
+【课程2.8】  分类数据可视化 - 统计图
+
+barplot() / countplot() / pointplot()
+
+'''
+# 1、barplot()
+# 柱状图 - 置信区间估计
+# 置信区间：样本均值 + 抽样误差
+sns.barplot(x='day',y='total_bill',hue='sex',data=tips,
+           palette='Blues',edgecolor='w')
+# 计算数据
+tips.groupby(['day','sex']).mean()
+
+# 1、barplot()
+# 柱状图 - 置信区间估计
+crashes=pd.read_csv('/Users/rae616188919/Desktop/seaborn-data-master/car_crashes.csv')
+print(crashes.head())
+
+f,ax=plt.subplots(figsize=(6,15))
+sns.set_color_codes('muted')
+# 设置第一个柱状图
+sns.barplot(x='total',y='abbrev',data=crashes,
+           label='total',color='b',edgecolor='w')
+# 设置第二个柱状图
+sns.barplot(x='alcohol',y='abbrev',data=crashes,
+           label='Alcohol-involved',color='g',edgecolor='w')
+#案例
+ax.legend(ncol=2,loc='lower right')
+
+2、countplot()
+# 计数柱状图
+titanic=pd.read_csv('/Users/rae616188919/Desktop/seaborn-data-master/titanic.csv')
+#sns.countplot(y="class", hue="who", data=titanic,palette = 'magma')  
+# x/y → 以x或者y轴绘图（横向，竖向）
+# 用法和barplot相似
+sns.countplot(x='class',hue='who',data=titanic)
+sns.despine(left=True,bottom=True)
+
+3、pointplot()
+# 折线图 - 置信区间估计
+sns.pointplot(x='time',y='total_bill',hue='smoker',data=tips,
+             palette='hls',
+              dodge=True, # 设置点是否分开
+              join=True, # 是否连线
+              markers=['o','x'],linestyles=['-','--'],
+             )
+# 计算数据
+# # 用法和barplot相似
+tips.groupby(['time','smoker']).mean()['total_bill']
+
+'''
+【课程2.9】  线性关系数据可视化
+
+lmplot()
+
+'''
+sns.set_style('darkgrid')
+sns.set_context('paper')
+sns.lmplot(x='total_bill',y='tip',hue='smoker',data=tips,
+          palette='Set1',
+           ci=50, # 误差值
+          size=5, # 图表大小
+          markers=['+','o']
+          )
+          
+sns.lmplot(x='total_bill',y='tip',data=tips,col='smoker')
+
+# 行为sex字段，列为time字段
+# x轴total_bill, y轴tip
+sns.lmplot(x='total_bill',y='tip',row='sex',col='time',data=tips,size=4)
+
+sns.lmplot(x='size',y='total_bill',hue='day',col='day',data=tips,
+           aspect=0.8, # 长宽比
+           x_jitter=0.3,  # 给x或者y轴随机增加噪音点
+          col_wrap=2) # 每行的列数)
+          
+# 非线性回归
+sns.lmplot(x="total_bill", y="tip",data=tips,
+           #order表示形状
+           order = 2)
+           
+'''
+【课程2.10】  时间线图表、热图
+
+tsplot() / heatmap()
+
+'''
+
+# 1、时间线图表 - tsplot()
+# 简单示例
+
+x= np.linspace(0,15,31)
+data=np.sin(x)+np.random.rand(10,31)+np.random.randn(10,1)
+sns.tsplot(data=data,
+           err_style='ci_band',
+           # 误差数据风格，可选：ci_band, ci_bars, boot_traces, boot_kde, unit_traces, unit_points
+           interpolate=True, # 是否连线
+           ci=[40,70,90],  # 设置误差区间 
+           color='g'
+          )
+          
+# 1、时间线图表 - tsplot()
+# 简单示例
+sns.tsplot(data=data,err_style='boot_traces',n_boot=300)
+
+# 1、时间线图表 - tsplot()
+# 参数设置
+gammas=pd.read_csv('/Users/rae616188919/Desktop/seaborn-data-master/gammas.csv')
+print(gammas.head())
+sns.tsplot(time='timepoint',value='BOLD signal', unit='subject',
+          condition='ROI',data=gammas)
+
+2、热图 - heatmap()
+flights=pd.read_csv('/Users/rae616188919/Desktop/seaborn-data-master/flights.csv')
+flights=flights.pivot('month','year','passengers')
+print(flights.head())
+sns.heatmap(flights,
+            annot=True,  # 是否显示数值
+            fmt='d', # 格式化字符串
+            cbar = True,
+            cmap='Reds',
+            cbar_kws={'orientation':'horizontal'} #是否横向显示图例色带
+           )
+ 
+
+# 绘制半边热图
+
+sns.set(style="white")
+# 设置风格
+
+rs = np.random.RandomState(33)
+d = pd.DataFrame(rs.normal(size=(100, 26)))
+corr = d.corr()   # 求解相关性矩阵表格
+# 创建数据
+
+mask = np.zeros_like(corr, dtype=np.bool)
+mask[np.triu_indices_from(mask)] = True
+# 设置一个“上三角形”蒙版
+
+cmap = sns.diverging_palette(220, 10, as_cmap=True)
+# 设置调色盘
+
+sns.heatmap(corr, mask=mask, cmap=cmap, vmax=.3, center=0,
+            square=True, linewidths=0.2)
+# 生成半边热图
