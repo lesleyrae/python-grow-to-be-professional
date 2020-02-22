@@ -1,0 +1,277 @@
+'''
+【课程5.5】  折线图与面积图
+
+① 单线图、多线图
+② 面积图、堆叠面积图
+
+'''
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+% matplotlib inline
+
+import warnings
+warnings.filterwarnings('ignore') 
+# 不发出警告
+
+from bokeh.io import output_notebook
+output_notebook()
+# 导入notebook绘图模块
+
+from bokeh.plotting import figure,show
+# 导入图表绘制、图标展示模块
+
+# 1、折线图 - 单线图
+
+from bokeh.models import ColumnDataSource
+# 导入ColumnDataSource模块
+# 将数据存储为ColumnDataSource对象
+# 参考文档：http://bokeh.pydata.org/en/latest/docs/user_guide/data.html
+# 可以将dict、Dataframe、group对象转化为ColumnDataSource对象
+
+df = pd.DataFrame({'value':np.random.randn(100).cumsum()})
+# 创建数据
+
+df.index.name = 'index'
+source = ColumnDataSource(data = df)
+# 转化为ColumnDataSource对象
+# 这里注意了，index和columns都必须有名称字段
+
+p = figure(plot_width=600, plot_height=400)
+p.line(x='index',y='value',source = source,     # 设置x，y值, source → 数据源
+       line_width=1, line_alpha = 0.8, line_color = 'black',line_dash = [10,4])   # 线型基本设置
+# 绘制折线图
+p.circle(x='index',y='value',source = source, 
+         size = 2,color = 'red',alpha = 0.8)
+# 绘制折点
+
+show(p)
+
+# 1、折线图 - 多线图
+# ① multi_line
+
+df = pd.DataFrame({'A':np.random.randn(100).cumsum(),"B":np.random.randn(100).cumsum()})
+# 创建数据
+
+p = figure(plot_width=600, plot_height=400)
+p.multi_line([df.index, df.index], [df['A'], df['B']],   # 注意x，y值的设置 → [x1,x2,x3,..], [y1,y2,y3,...]
+             color=["firebrick", "navy"],    # 可同时设置 → color= "firebrick"
+             alpha=[0.8, 0.6],     # 可同时设置 → alpha = 0.6
+             line_width=[2,1],     # 可同时设置 → line_width = 2
+            )
+# 绘制多段线
+# 这里由于需要输入具体值，故直接用dataframe，或者dict即可
+
+show(p)
+
+# 1、折线图 - 多线图
+# ② 多个line
+
+x = np.linspace(0.1, 5, 100)
+# 创建x值
+p = figure(title="log axis example", y_axis_type="log",y_range=(0.001, 10**22))
+# 这里设置对数坐标轴
+p.line(x, np.sqrt(x), legend="y=sqrt(x)",
+       line_color="tomato", line_dash="dotdash")
+# line1
+p.line(x, x, legend="y=x")
+p.circle(x, x, legend="y=x")
+# line2，折线图+散点图
+p.line(x, x**2, legend="y=x**2")
+p.circle(x, x**2, legend="y=x**2",fill_color=None, line_color="olivedrab")
+# line3
+p.line(x, 10**x, legend="y=10^x",line_color="gold", line_width=2)
+# line4
+p.line(x, x**x, legend="y=x^x",line_dash="dotted", line_color="indigo", line_width=2)
+# line5
+p.line(x, 10**(x**2), legend="y=10^(x^2)",line_color="coral", line_dash="dashed", line_width=2)
+# line6
+p.legend.location = "top_left"
+p.xaxis.axis_label = 'Domain'
+p.yaxis.axis_label = 'Values (log scale)'
+# 设置图例及label
+show(p)
+
+# 2、面积图 - 单维度面积图
+
+s = pd.Series(np.random.randn(100).cumsum())
+s.iloc[0] = 0
+s.iloc[-1] = 0
+# 创建数据
+# 注意设定起始值和终点值为最低点
+
+p = figure(plot_width=600, plot_height=400)
+p.patch(s.index, s.values,     # 设置x，y值
+        line_width=1, line_alpha = 0.8, line_color = 'black',line_dash = [10,4],   # 线型基本设置
+        fill_color = 'black',fill_alpha = 0.2
+        )
+# 绘制面积图
+# .patch将会把所有点连接成一个闭合面
+p.circle(s.index, s.values,size = 5,color = 'red',alpha = 0.8)
+# 绘制折点
+show(p)
+
+'''
+【课程5.6】  柱状图/堆叠图/直方图
+
+① 单系列柱状图
+② 多系列柱状图
+③ 堆叠图
+④ 直方图
+
+'''
+# 1、单系列柱状图
+# vbar
+p = figure(plot_width=400, plot_height=400)
+p.vbar(x=[1, 2, 3], width=0.5, bottom=0,top=[1.2, 2.5, 3.7],  # x：横轴坐标，width：宽度，bottom：底高度，top：顶高度
+       #color = ['red','blue','green'], alpha = 0.8   # 整体颜色设置，也可单独设置 → color="firebrick"
+       line_width = 1,line_alpha = 0.8,line_color = 'black', line_dash = [5,2],    # 单独设置线参数
+       fill_color = 'red',fill_alpha = 0.6    # 单独设置填充颜色参数
+      )
+# 绘制竖向柱状图
+show(p)
+
+# 1、单系列柱状图
+# hbar
+p = figure(plot_width=400, plot_height=400)
+p.hbar(y=[1, 2, 3], height=0.5, left=0,right=[1.2, 2.5, 3.7],  # y：纵轴坐标，height：厚度，left：左边最小值，right：右边最大值
+       color = ['red','blue','green'])
+# 绘制竖向柱状图
+show(p)
+
+# 1、单系列柱状图 - 分类设置标签
+# ColumnDataSource
+from bokeh.palettes import Spectral6
+from bokeh.transform import factor_cmap
+# 导入相关模块
+fruits = ['Apples', 'Pears', 'Nectarines', 'Plums', 'Grapes', 'Strawberries']
+counts = [5, 3, 4, 2, 4, 6]
+source = ColumnDataSource(data=dict(fruits=fruits, counts=counts))
+colors = [ "salmon", "olive", "darkred", "goldenrod", "skyblue", "orange"]
+# 创建一个包含标签的data，对象类型为ColumnDataSource
+p = figure(x_range=fruits, y_range=(0,9), plot_height=350, title="Fruit Counts",tools="")
+p.vbar(x='fruits', top='counts', source=source,    # 加载数据另一个方式
+       width=0.9, alpha = 0.8,
+       color = factor_cmap('fruits', palette=Spectral6, factors=fruits),    # 设置颜色
+       legend="fruits")
+# 绘制柱状图，横轴直接显示标签
+# factor_cmap(field_name, palette, factors, start=0, end=None, nan_color='gray')：颜色转换模块，生成一个颜色转换对象
+# field_name：分类名称
+# palette：调色盘
+# factors：用于在调色盘中分颜色的参数
+# 参考文档：http://bokeh.pydata.org/en/latest/docs/reference/transform.html
+p.xgrid.grid_line_color = None
+p.legend.orientation = "horizontal"
+p.legend.location = "top_center"
+# 其他参数设置
+show(p)
+
+# 2、多系列柱状图
+# vbar
+from bokeh.transform import dodge
+from bokeh.core.properties import value
+# 导入dodge、value模块
+df = pd.DataFrame({'2015':[2, 1, 4, 3, 2, 4],'2016':[5, 3, 3, 2, 4, 6], '2017':[3, 2, 4, 4, 5, 3]},
+                 index = ['Apples', 'Pears', 'Nectarines', 'Plums', 'Grapes', 'Strawberries'])
+# 创建数据
+fruits = df.index.tolist()   # 横坐标
+years = df.columns.tolist()    # 系列名
+data = {'index':fruits}
+for year in years:
+    data[year] = df[year].tolist()
+print(data)
+# 生成数据，数据格式为dict
+source = ColumnDataSource(data=data)
+# 将数据转化为ColumnDataSource对象
+p = figure(x_range=fruits, y_range=(0, 10), plot_height=350, title="Fruit Counts by Year",tools="")
+p.vbar(x=dodge('index', -0.25, range=p.x_range), top='2015', width=0.2, source=source,color="#c9d9d3", legend=value("2015"))
+p.vbar(x=dodge('index',  0.0,  range=p.x_range), top='2016', width=0.2, source=source,color="#718dbf", legend=value("2016"))
+p.vbar(x=dodge('index',  0.25, range=p.x_range), top='2017', width=0.2, source=source,color="#e84d60", legend=value("2017"))
+# 绘制多系列柱状图
+# dodge(field_name, value, range=None) → 转换成一个可分组的对象，value为元素的位置（配合width设置）
+# value(val, transform=None) → 按照年份分为dict
+p.xgrid.grid_line_color = None
+p.legend.location = "top_left"
+p.legend.orientation = "horizontal"
+# 其他参数设置
+show(p)
+
+# 3、堆叠图
+from bokeh.core.properties import value
+# 导入value模块
+fruits = ['Apples', 'Pears', 'Nectarines', 'Plums', 'Grapes', 'Strawberries']
+years = ["2015", "2016", "2017"]
+colors = ["#c9d9d3", "#718dbf", "#e84d60"]
+data = {'fruits' : fruits,
+        '2015'   : [2, 1, 4, 3, 2, 4],
+        '2016'   : [5, 3, 4, 2, 4, 6],
+        '2017'   : [3, 2, 4, 4, 5, 3]}
+source = ColumnDataSource(data=data)
+# 创建数据
+p = figure(x_range=fruits, plot_height=350, title="Fruit Counts by Year",tools="")
+renderers = p.vbar_stack(years,          # 设置堆叠值，这里source中包含了不同年份的值，years变量用于识别不同堆叠层
+                         x='fruits',     # 设置x坐标
+                         source=source,
+                         width=0.9, color=colors,
+                         legend=[value(x) for x in years], name=years)
+# 绘制堆叠图
+# 注意第一个参数需要放years
+p.xgrid.grid_line_color = None
+p.axis.minor_tick_line_color = None
+p.outline_line_color = None
+p.legend.location = "top_left"
+p.legend.orientation = "horizontal"
+# 设置其他参数
+show(p)
+
+# 3、堆叠图
+from bokeh.palettes import GnBu3, OrRd3
+# 导入颜色模块
+fruits = ['Apples', 'Pears', 'Nectarines', 'Plums', 'Grapes', 'Strawberries']
+years = ["2015", "2016", "2017"]
+exports = {'fruits' : fruits,
+           '2015'   : [2, 1, 4, 3, 2, 4],
+           '2016'   : [5, 3, 4, 2, 4, 6],
+           '2017'   : [3, 2, 4, 4, 5, 3]}
+imports = {'fruits' : fruits,
+           '2015'   : [-1, 0, -1, -3, -2, -1],
+           '2016'   : [-2, -1, -3, -1, -2, -2],
+           '2017'   : [-1, -2, -1, 0, -2, -2]}
+p = figure(y_range=fruits, plot_height=350, x_range=(-16, 16), title="Fruit import/export, by year")
+p.hbar_stack(years, y='fruits', height=0.9, color=GnBu3, source=ColumnDataSource(exports),
+             legend=["%s exports" % x for x in years])      # 绘制出口数据堆叠图
+p.hbar_stack(years, y='fruits', height=0.9, color=OrRd3, source=ColumnDataSource(imports),
+             legend=["%s imports" % x for x in years])      # 绘制进口数据堆叠图，这里值为负值
+p.y_range.range_padding = 0.2     # 调整边界间隔
+p.ygrid.grid_line_color = None   
+p.legend.location = "top_left"
+p.axis.minor_tick_line_color = None
+p.outline_line_color = None
+# 设置其他参数
+show(p)
+
+# 4、直方图
+# np.histogram + figure.quad()
+# 不需要构建ColumnDataSource对象
+df = pd.DataFrame({'value': np.random.randn(1000)*100})
+df.index.name = 'index'
+print(df.head())
+# 创建数据
+hist, edges = np.histogram(df['value'],bins=20)
+print(hist[:5])
+print(edges)
+# 将数据解析成直方图统计格式
+# 高阶函数np.histogram(a, bins=10, range=None, weights=None, density=None) 
+# a：数据
+# bins：箱数
+# range：最大最小值的范围，如果不设定则为(a.min(), a.max())
+# weights：权重
+# density：为True则返回“频率”，为False则返回“计数”
+# 返回值1 - hist：每个箱子的统计值（top）
+# 返回值2 - edges：每个箱子的位置坐标，这里n个bins将会有n+1个edges
+p = figure(title="HIST", tools="save",background_fill_color="#E8DDCB")
+p.quad(top=hist, bottom=0, left=edges[:-1], right=edges[1:],   # 分别代表每个柱子的四边值
+        fill_color="#036564", line_color="#033649")
+# figure.quad绘制直方图
+show(p)
+
