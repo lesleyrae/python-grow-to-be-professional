@@ -1,0 +1,119 @@
+'''
+【课程5.7】  绘图表达进阶操作
+
+① 轴线设置
+② 浮动设置
+③ 多图表设置
+
+'''
+# 1、轴线标签设置
+# 设置字符串
+df = pd.DataFrame({'score':[98,86,74,67,87]},index = ['小明','小王','小张','小红','小红帽'])
+df.index.name = 'name'
+#print(df)
+# 创建数据
+source = ColumnDataSource(df)
+# 讲数据转化为ColumnDataSource对象
+name = df.index.tolist()   # 提取name
+p = figure(x_range=name, y_range=(60,100), plot_height=350, title="考试成绩",tools="")
+# 通过x_range设置横轴标签，这里提取成list
+p.circle(x = 'name', y = 'score', source = source,
+         size = 20, line_color = 'black', line_dash = [6,4],
+         fill_color = 'red',fill_alpha = 0.8)
+show(p)
+
+# 1、轴线标签设置
+# 时间序列设置
+# Dataframe DatetimeIndex + x_axis_type
+from bokeh.sampledata.commits import data
+print(data.head())
+print(type(data.index))
+# 导入数据，查看数据
+# 这里index为时间序列
+DAYS = ['Sun', 'Sat', 'Fri', 'Thu', 'Wed', 'Tue', 'Mon']
+source = ColumnDataSource(data)
+# 转化为ColumnDataSource对象
+p = figure(plot_width=800, plot_height=600, 
+           y_range=DAYS,                     # 设置图表的y轴刻度分类
+           x_axis_type='datetime',           # 设置x轴类型 → 时间序列
+           title="Commits by Time of Day (US/Central) 2012-2016")
+p.circle(x='time', y='day',  source=source, alpha=0.2)
+# 生成散点图
+p.ygrid.grid_line_color = None
+# 设置其他参数
+show(p)
+
+# 1、轴线标签设置
+# 设置对数坐标轴
+x = [0.1, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0]
+y = [10**xx for xx in x]
+# 创建数据
+p = figure(plot_width=400, plot_height=400, 
+           y_axis_type="log")    
+# y_axis_type="log" → 对数坐标轴
+p.line(x, y, line_width=2)
+p.circle(x, y, fill_color="white", size=8)
+show(p)
+
+# 2、浮动设置
+# Jitter
+# 参考文档：https://bokeh.pydata.org/en/latest/docs/reference/transform.html
+
+from bokeh.transform import jitter
+DAYS = ['Sun', 'Sat', 'Fri', 'Thu', 'Wed', 'Tue', 'Mon']
+source = ColumnDataSource(data)
+# 转化为ColumnDataSource对象
+p = figure(plot_width=800, plot_height=600, 
+           y_range=DAYS,                     # 设置图表的y轴刻度分类
+           x_axis_type='datetime',           # 设置x轴类型 → 时间序列
+           title="Commits by Time of Day (US/Central) 2012-2016")
+p.circle(x='time', 
+         y=jitter('day', width=0.6, range=p.y_range),
+         source=source, alpha=0.3)
+# jitter参数 → 'day'：第一参数，这里指y的值，width：间隔宽度比例，range：分类范围对象，这里和y轴的分类一致
+
+# 3、多图表设置
+# gridplot
+from bokeh.layouts import gridplot
+# 导入gridplot模块
+x = list(range(11))
+y0 = x
+y1 = [10-xx for xx in x]
+y2 = [abs(xx-5) for xx in x]
+# 创建数据
+
+s1 = figure(plot_width=250, plot_height=250, title=None)
+s1.circle(x, y0, size=10, color="navy", alpha=0.5)
+# 散点图1
+s2 = figure(plot_width=250, plot_height=250, x_range=s1.x_range, y_range=s1.y_range, title=None)
+s2.triangle(x, y1, size=10, color="firebrick", alpha=0.5)
+# 散点图2，设置和散点图1一样的x_range/y_range → 图表联动
+s3 = figure(plot_width=250, plot_height=250, x_range=s1.x_range, title=None)
+s3.square(x, y2, size=10, color="olive", alpha=0.5)
+# 散点图3，设置和散点图1一样的x_range/y_range → 图表联动
+p = gridplot([[s1, s2, s3]])
+#p = gridplot([[s1, s2], [None, s3]])
+# 组合图表
+show(p)
+p.ygrid.grid_line_color = None
+# 设置其他参数
+
+# 3、多图表设置
+# gridplot
+x = list(range(-20, 21))
+y0 = [abs(xx) for xx in x]
+y1 = [xx**2 for xx in x]
+source = ColumnDataSource(data=dict(x=x, y0=y0, y1=y1))
+# 创建数据
+TOOLS = "box_select,lasso_select,help"
+left = figure(tools=TOOLS, plot_width=300, plot_height=300, title=None)
+left.circle('x', 'y0', source=source)    # 散点图1
+right = figure(tools=TOOLS, plot_width=300, plot_height=300, title=None)
+right.circle('x', 'y1', source=source)   # 散点图2
+# 共用一个ColumnDataSource
+p = gridplot([[left, right]])
+# 组合图表
+
+show(p)
+
+show(p)
