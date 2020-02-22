@@ -1,0 +1,143 @@
+'''
+【课程5.8】 ToolBar工具栏设置
+
+① 位置设置
+② 移动、放大缩小、存储、刷新
+③ 选择
+④ 提示框、十字线
+
+'''
+# 工具栏 tools
+# （1）设置位置
+
+p = figure(plot_width=300, plot_height=300,
+          toolbar_location="above")
+# 工具栏位置："above"，"below"，"left"，"right"
+
+p.circle(np.random.randn(100),np.random.randn(100))
+show(p)
+
+# 工具栏 tools
+# （1）设置位置
+p = figure(plot_width=300, plot_height=300,
+           toolbar_location="below",
+           toolbar_sticky=False)
+# 工具栏位置设置为"below"时，可增加toolbar_sticky参数使得toolsbar不被遮挡
+p.circle(np.random.randn(100),np.random.randn(100))
+show(p)
+
+# 工具栏 tools
+# （2）移动、放大缩小、存储、刷新
+TOOLS = '''
+        pan, xpan, ypan,             
+        box_zoom,
+        wheel_zoom, xwheel_zoom, ywheel_zoom,   
+        zoom_in, xzoom_in, yzoom_in,
+        zoom_out, xzoom_out, yzoom_out,
+        save,reset
+        '''
+p = figure(plot_width=800, plot_height=400,toolbar_location="above",
+           tools = TOOLS)
+# 添加toolbar
+# 这里tools = '' 则不显示toolbar
+p.circle(np.random.randn(500),np.random.randn(500))
+show(p)
+
+# 工具栏 tools
+# （3）选择
+
+TOOLS = '''
+        box_select,lasso_select,
+        reset
+        '''
+p = figure(plot_width=800, plot_height=400,toolbar_location="above",
+           tools = TOOLS)
+# 添加toolbar
+p.circle(np.random.randn(500),np.random.randn(500))
+show(p)
+
+# 工具栏 tools
+# （4）提示框、十字线
+from bokeh.models import HoverTool
+# 用于设置显示标签内容
+df = pd.DataFrame({'A':np.random.randn(500)*100,
+                  'B':np.random.randn(500)*100,
+                  'type':np.random.choice(['pooh', 'rabbit', 'piglet', 'Christopher'],500),
+                  'color':np.random.choice(['red', 'yellow', 'blue', 'green'],500)})
+df.index.name = 'index'
+source = ColumnDataSource(df)
+print(df.head())
+# 创建数据 → 包含四个标签
+hover = HoverTool(tooltips=[
+                            ("index", "$index"),
+                            ("(x,y)", "($x, $y)"),
+                            ("A", "@A"),
+                            ("B", "@B"),
+                            ("type", "@type"),
+                            ("color", "@color"),
+                        ])
+# 设置标签显示内容
+# $index：自动计算 → 数据index
+# $x：自动计算 → 数据x值
+# $y：自动计算 → 数据y值
+# @A：显示ColumnDataSource中对应字段值
+p1 = figure(plot_width=800, plot_height=400,toolbar_location="above",
+            tools=[hover,'box_select,reset,wheel_zoom,pan,crosshair'])   # 注意这里书写方式
+# 如果不设置标签，就只写hover，例如 tools='hover,box_select,reset,wheel_zoom,pan,crosshair'
+p1.circle(x = 'A',y = 'B',source = source,size = 10,alpha = 0.3, color = 'color')
+show(p1)
+p2 = figure(plot_width=800, plot_height=400,toolbar_location="above",
+           tools=[hover,'box_select,reset,wheel_zoom,pan'])
+p2.vbar(x = 'index', width=1, top='A',source = source)
+show(p2)
+print(hover)
+
+'''
+【课程5.9】  其他交互工具设置
+
+① 筛选数据 - 显示/隐藏
+② 交互小工具，参考文档：http://bokeh.pydata.org/en/latest/docs/user_guide/interaction/widgets.html#pretext
+
+'''
+# 1、筛选数据 - 隐藏
+# legend.click_policy
+
+from bokeh.palettes import Spectral4
+# 导入颜色模块
+
+df = pd.DataFrame({'A':np.random.randn(500).cumsum(),
+                  'B':np.random.randn(500).cumsum(),
+                  'C':np.random.randn(500).cumsum(),
+                  'D':np.random.randn(500).cumsum()},
+                 index = pd.date_range('20180101',freq = 'D',periods=500))
+# 创建数据
+
+p = figure(plot_width=800, plot_height=400, x_axis_type="datetime")
+p.title.text = '点击图例来隐藏数据'
+
+for col,color in zip(df.columns.tolist(),Spectral4):
+    p.line(df.index,df[col],line_width=2, color=color, alpha=0.8,legend = col)
+
+p.legend.location = "top_left"
+p.legend.click_policy="hide"
+# 设置图例，点击隐藏
+
+show(p)
+
+# 2、交互小工具
+# 图表分页
+
+from bokeh.models.widgets import Panel, Tabs
+# 导入panel，tabs模块
+p1 = figure(plot_width=500, plot_height=300)
+p1.circle([1, 2, 3, 4, 5], [6, 7, 2, 4, 5], size=20, color="navy", alpha=0.5)
+tab1 = Panel(child=p1, title="circle")
+# child → 页码
+# title → 分页名称
+p2 = figure(plot_width=500, plot_height=300)
+p2.line([1, 2, 3, 4, 5], [4, 2, 3, 8, 6], line_width=3, color="navy", alpha=0.5)
+tab2 = Panel(child=p2, title="line")
+tabs = Tabs(tabs=[ tab1, tab2 ])
+# 设置分页图表
+show(tabs)
+
