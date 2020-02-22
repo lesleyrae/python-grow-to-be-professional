@@ -1,0 +1,229 @@
+# 辅助标注 - 线
+from bokeh.models.annotations import Span
+# 导入Span模块
+x = np.linspace(0, 20, 200)
+y = np.sin(x)
+# 创建x，y数据
+p = figure(y_range=(-2, 2))
+p.line(x, y)
+# 绘制曲线
+upper = Span(location=1,           # 设置位置，对应坐标值
+             dimension='width',    # 设置方向，width为横向，height为纵向  
+             line_color='olive', line_width=4   # 设置线颜色、线宽
+            )
+p.add_layout(upper)
+# 绘制辅助线1
+lower = Span(location=-1, dimension='width', line_color='firebrick', line_width=4)
+p.add_layout(lower)
+# 绘制辅助线2
+show(p)
+
+# 辅助标注 - 矩形
+from bokeh.models.annotations import BoxAnnotation
+# 导入BoxAnnotation模块
+x = np.linspace(0, 20, 200)
+y = np.sin(x)
+# 创建x，y数据
+p = figure(y_range=(-2, 2))
+p.line(x, y)
+# 绘制曲线
+upper = BoxAnnotation(bottom=1, fill_alpha=0.1, fill_color='olive')
+p.add_layout(upper)
+# 绘制辅助矩形1
+lower = BoxAnnotation(top=-1, fill_alpha=0.1, fill_color='firebrick')
+p.add_layout(lower)
+# 绘制辅助矩形2
+center = BoxAnnotation(top=0.6, bottom=-0.3, left=7, right=12,  # 设置矩形四边位置
+                       fill_alpha=0.1, fill_color='navy'        # 设置透明度、颜色
+                      )
+p.add_layout(center)
+# 绘制辅助矩形3
+show(p)
+
+# 绘图注释
+
+from bokeh.models.annotations import Label
+# 导入Label模块，注意是annotations中的Label
+p = figure(x_range=(0,10), y_range=(0,10))
+p.circle([2, 5, 8], [4, 7, 6], color="olive", size=10)
+# 绘制散点图
+label = Label(x=5, y=7,       # 标注注释位置
+              x_offset=12,    # x偏移，同理y_offset
+              text="Second Point",      # 注释内容
+              text_font_size="12pt",    # 字体大小
+              border_line_color="red", background_fill_color="gray", background_fill_alpha = 0.5   # 背景线条颜色、背景颜色、透明度
+             )
+p.add_layout(label)
+# 绘制注释
+show(p)
+
+# 注释箭头
+from bokeh.models.annotations import Arrow
+from bokeh.models.arrow_heads import OpenHead, NormalHead, VeeHead   # 三种箭头类型
+# 导入相关模块
+p = figure(plot_width=600, plot_height=600)
+p.circle(x=[0, 1, 0.5], y=[0, 0, 0.7], radius=0.1, color=["navy", "yellow", "red"], fill_alpha=0.1)
+# 创建散点图
+p.add_layout(Arrow(end=OpenHead(line_color="firebrick", line_width=4),  # 设置箭头类型，及相关参数：OpenHead, NormalHead, VeeHead
+                   x_start=0, y_start=0, x_end=1, y_end=0))   # 设置箭头矢量方向
+# 绘制箭头1
+p.add_layout(Arrow(end=NormalHead(fill_color="orange"),
+                   x_start=1, y_start=0, x_end=0.5, y_end=0.7))
+# 绘制箭头2
+p.add_layout(Arrow(end=VeeHead(size=35), line_color="red",
+                   x_start=0.5, y_start=0.7, x_end=0, y_end=0))
+# 绘制箭头3
+show(p)
+
+# 调色盘
+# 颜色参考文档：http://bokeh.pydata.org/en/latest/docs/reference/palettes.html
+# ColorBrewer：http://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3
+
+import bokeh.palettes as bp
+from bokeh.palettes import brewer
+print('所有调色板名称：\n',bp.__palettes__)
+print('-------')
+# 查看所有调色板名称
+print('蓝色调色盘颜色：\n',bp.Blues)
+print('-------')
+# 查看蓝色调色盘颜色
+
+n = 8
+colori = brewer['YlGn'][n]   
+print('YlGn调色盘解析为%i个颜色，分别为：\n' % n, colori)
+# 调色盘解析 → 不同颜色解析最多颜色有限
+
+所有调色板名称：
+ ['Accent3', 'Accent4', 'Accent5', 'Accent6', 'Accent7', 'Accent8', 'Blues3', 'Blues4', 'Blues5', 'Blues6', 'Blues7', 'Blues8',
+ 'Blues9', 'BrBG3', 'BrBG4', 'BrBG5', 'BrBG6', 'BrBG7', 'BrBG8', 'BrBG9', 'BrBG10', 'BrBG11', 'BuGn3', 'BuGn4', 'BuGn5',
+ 'BuGn6', 'BuGn7', 'BuGn8', 'BuGn9', 'BuPu3', 'BuPu4', 'BuPu5', 'BuPu6', 'BuPu7', 'BuPu8', 'BuPu9', 'Category10_3', 
+ 'Category10_4', 'Category10_5', 'Category10_6', 'Category10_7', 'Category10_8', 'Category10_9', 'Category10_10', 
+ 'Category20_3', 'Category20_4', 'Category20_5', 'Category20_6', 'Category20_7', 'Category20_8', 'Category20_9', 
+ 'Category20_10', 'Category20_11', 'Category20_12', 'Category20_13', 'Category20_14', 'Category20_15', 'Category20_16', 
+ 'Category20_17', 'Category20_18', 'Category20_19', 'Category20_20', 'Category20b3', 'Category20b4', 'Category20b5', 
+ 'Category20b6', 'Category20b7', 'Category20b8', 'Category20b9', 'Category20b10', 'Category20b11', 'Category20b12', 
+ 'Category20b13', 'Category20b14', 'Category20b15', 'Category20b16', 'Category20b17', 'Category20b18', 'Category20b19', 
+ 'Category20b20', 'Category20c3', 'Category20c4', 'Category20c5', 'Category20c6', 'Category20c7', 'Category20c8', 
+ 'Category20c9', 'Category20c10', 'Category20c11', 'Category20c12', 'Category20c13', 'Category20c14', 'Category20c15', 
+ 'Category20c16', 'Category20c17', 'Category20c18', 'Category20c19', 'Category20c20', 'Colorblind3', 'Colorblind4', 
+ 'Colorblind5', 'Colorblind6', 'Colorblind7', 'Colorblind8', 'Dark2_3', 'Dark2_4', 'Dark2_5', 'Dark2_6', 'Dark2_7', 
+ 'Dark2_8', 'GnBu3', 'GnBu4', 'GnBu5', 'GnBu6', 'GnBu7', 'GnBu8', 'GnBu9', 'Greens3', 'Greens4', 'Greens5', 'Greens6', 
+ 'Greens7', 'Greens8', 'Greens9', 'Greys3', 'Greys4', 'Greys5', 'Greys6', 'Greys7', 'Greys8', 'Greys9', 'Greys256', 
+ 'Inferno3', 'Inferno4', 'Inferno5', 'Inferno6', 'Inferno7', 'Inferno8', 'Inferno9', 'Inferno10', 'Inferno11', 'Inferno256', 
+ 'Magma3', 'Magma4', 'Magma5', 'Magma6', 'Magma7', 'Magma8', 'Magma9', 'Magma10', 'Magma11', 'Magma256', 'OrRd3', 'OrRd4', 
+ 'OrRd5', 'OrRd6', 'OrRd7', 'OrRd8', 'OrRd9', 'Oranges3', 'Oranges4', 'Oranges5', 'Oranges6', 'Oranges7', 'Oranges8', 
+ 'Oranges9', 'PRGn3', 'PRGn4', 'PRGn5', 'PRGn6', 'PRGn7', 'PRGn8', 'PRGn9', 'PRGn10', 'PRGn11', 'Paired3', 'Paired4', 
+ 'Paired5', 'Paired6', 'Paired7', 'Paired8', 'Paired9', 'Paired10', 'Paired11', 'Paired12', 'Pastel1_3', 'Pastel1_4', 
+ 'Pastel1_5', 'Pastel1_6', 'Pastel1_7', 'Pastel1_8', 'Pastel1_9', 'Pastel2_3', 'Pastel2_4', 'Pastel2_5', 'Pastel2_6', 
+ 'Pastel2_7', 'Pastel2_8', 'PiYG3', 'PiYG4', 'PiYG5', 'PiYG6', 'PiYG7', 'PiYG8', 'PiYG9', 'PiYG10', 'PiYG11', 'Plasma3', 
+ 'Plasma4', 'Plasma5', 'Plasma6', 'Plasma7', 'Plasma8', 'Plasma9', 'Plasma10', 'Plasma11', 'Plasma256', 'PuBu3', 'PuBu4', 
+ 'PuBu5', 'PuBu6', 'PuBu7', 'PuBu8', 'PuBu9', 'PuBuGn3', 'PuBuGn4', 'PuBuGn5', 'PuBuGn6', 'PuBuGn7', 'PuBuGn8', 'PuBuGn9', 
+ 'PuOr3', 'PuOr4', 'PuOr5', 'PuOr6', 'PuOr7', 'PuOr8', 'PuOr9', 'PuOr10', 'PuOr11', 'PuRd3', 'PuRd4', 'PuRd5', 'PuRd6', 
+ 'PuRd7', 'PuRd8', 'PuRd9', 'Purples3', 'Purples4', 'Purples5', 'Purples6', 'Purples7', 'Purples8', 'Purples9', 'RdBu3', 
+ 'RdBu4', 'RdBu5', 'RdBu6', 'RdBu7', 'RdBu8', 'RdBu9', 'RdBu10', 'RdBu11', 'RdGy3', 'RdGy4', 'RdGy5', 'RdGy6', 'RdGy7', 
+ 'RdGy8', 'RdGy9', 'RdGy10', 'RdGy11', 'RdPu3', 'RdPu4', 'RdPu5', 'RdPu6', 'RdPu7', 'RdPu8', 'RdPu9', 'RdYlBu3', 'RdYlBu4',
+ 'RdYlBu5', 'RdYlBu6', 'RdYlBu7', 'RdYlBu8', 'RdYlBu9', 'RdYlBu10', 'RdYlBu11', 'RdYlGn3', 'RdYlGn4', 'RdYlGn5', 'RdYlGn6', 
+ 'RdYlGn7', 'RdYlGn8', 'RdYlGn9', 'RdYlGn10', 'RdYlGn11', 'Reds3', 'Reds4', 'Reds5', 'Reds6', 'Reds7', 'Reds8', 'Reds9', 
+ 'Set1_3', 'Set1_4', 'Set1_5', 'Set1_6', 'Set1_7', 'Set1_8', 'Set1_9', 'Set2_3', 'Set2_4', 'Set2_5', 'Set2_6', 'Set2_7', 
+ 'Set2_8', 'Set3_3', 'Set3_4', 'Set3_5', 'Set3_6', 'Set3_7', 'Set3_8', 'Set3_9', 'Set3_10', 'Set3_11', 'Set3_12', 
+ 'Spectral3', 'Spectral4', 'Spectral5', 'Spectral6', 'Spectral7', 'Spectral8', 'Spectral9', 'Spectral10', 'Spectral11', 
+ 'Viridis3', 'Viridis4', 'Viridis5', 'Viridis6', 'Viridis7', 'Viridis8', 'Viridis9', 'Viridis10', 'Viridis11', 'Viridis256', 
+ 'YlGn3', 'YlGn4', 'YlGn5', 'YlGn6', 'YlGn7', 'YlGn8', 'YlGn9', 'YlGnBu3', 'YlGnBu4', 'YlGnBu5', 'YlGnBu6', 'YlGnBu7', 
+ 'YlGnBu8', 'YlGnBu9', 'YlOrBr3', 'YlOrBr4', 'YlOrBr5', 'YlOrBr6', 'YlOrBr7', 'YlOrBr8', 'YlOrBr9', 'YlOrRd3', 'YlOrRd4', 
+ 'YlOrRd5', 'YlOrRd6', 'YlOrRd7', 'YlOrRd8', 'YlOrRd9']
+ 
+ # 1、基本散点图绘制
+
+s = pd.Series(np.random.randn(80))
+# 创建数据
+
+p = figure(plot_width=600, plot_height=400)
+p.circle(s.index, s.values,                  # x，y值，也可以写成：x=s.index, y = s.values
+         size=25, color="navy", alpha=0.5,   # 点的大小、颜色、透明度（注意，这里的color是线+填充的颜色，同时线和填充可以分别上色，参数如下）
+         fill_color = 'red',fill_alpha = 0.6, # 填充的颜色、透明度
+         line_color = 'black',line_alpha = 0.8,line_dash = 'dashed',line_width = 2,   # 点边线的颜色、透明度、虚线、宽度
+         # 同时还有line_cap、line_dash_offset、line_join参数    
+         legend = 'scatter-circle',    # 设置图例
+         #radius = 2   # 设置点的半径，和size只能同时选一个
+        )
+# 创建散点图，基本参数
+# bokeh对line和fill是同样的设置方法
+
+p.legend.location = "bottom_right"
+# 设置图例位置
+
+show(p)
+
+# 2、散点图不同 颜色上色/散点大小 的方法
+# ① 数据中有一列专门用于设置颜色 / 点大小
+
+from bokeh.palettes import brewer
+
+rng = np.random.RandomState(1)
+df = pd.DataFrame(rng.randn(100,2)*100,columns = ['A','B'])
+# 创建数据，有2列随机值
+
+df['size'] = rng.randint(10,30,100)   
+# 设置点大小字段
+
+colormap1 = {1: 'red', 2: 'green', 3: 'blue'}    
+df['color1'] = [colormap1[x] for x in rng.randint(1,4,100)]           # 调色盘1
+
+n = 8
+colormap2 = brewer['Blues'][n]
+df['color2'] = [colormap2[x] for x in rng.randint(0,n,100)]           # 调色盘2
+# 设置颜色字段
+# 通过字典/列表，识别颜色str
+# 这里设置了两个调色盘，第二个为蓝色渐变
+
+p = figure(plot_width=600, plot_height=400)
+p.circle(df['A'], df['B'],       # 设置散点图x，y值
+         line_color = 'white',   # 设置点边线为白色
+         fill_color = df['color2'],fill_alpha = 0.5,   # 设置内部填充颜色，这里用到了颜色字段
+         size = df['size']       # 设置点大小，这里用到了点大小字段
+        )
+
+show(p)
+
+# 2、散点图不同 颜色上色/散点大小 的方法
+# ② 遍历数据分开做图
+
+rng = np.random.RandomState(1)
+df = pd.DataFrame(rng.randn(100,2)*100,columns = ['A','B'])
+df['type'] = rng.randint(0,7,100)
+print(df.head())
+# 创建数据
+
+colors = ["red", "olive", "darkred", "goldenrod", "skyblue", "orange", "salmon"]
+# 创建颜色列表
+
+p = figure(plot_width=600, plot_height=400,tools = "pan,wheel_zoom,box_select,lasso_select,reset")
+for t in df['type'].unique():
+    p.circle(df['A'][df['type'] == t], df['B'][df['type'] == t],       # 设置散点图x，y值
+             size = 20,alpha = 0.5,
+             color = colors[t])        
+# 通过分类设置颜色
+
+show(p)
+
+# 3、不同符号的散点图
+# asterisk(), circle(), circle_cross(), circle_x(), cross(), diamond(), diamond_cross(), inverted_triangle()
+# square(), square_cross(), square_x(), triangle(), x()
+
+p = figure(plot_width=600, plot_height=400,x_range = [0,3], y_range = [0,7])
+p.circle_cross(1, 1, size = 30, alpha = 0.5, legend = 'circle_cross')
+p.asterisk(1, 2, size = 30, alpha = 0.5, legend = 'asterisk')
+p.circle_x(1, 3, size = 30, alpha = 0.5, legend = 'circle_x')
+p.cross(1, 4, size = 30, alpha = 0.5, legend = 'cross')
+p.diamond(1, 5, size = 30, alpha = 0.5, legend = 'diamond')
+p.diamond_cross(1, 6, size = 30, alpha = 0.5, legend = 'diamond_cross')
+p.inverted_triangle(2, 1, size = 30, alpha = 0.5, legend = 'inverted_triangle')
+p.square(2, 2, size = 30, alpha = 0.5, legend = 'square')
+p.square_cross(2, 3, size = 30, alpha = 0.5, legend = 'square_cross')
+p.square_x(2, 4, size = 30, alpha = 0.5, legend = 'square_x')
+p.triangle(2, 5, size = 30, alpha = 0.5, legend = 'triangle')
+p.x(2, 6, size = 30, alpha = 0.5, legend = 'x')
+p.legend.location = "bottom_right"
+# 设置图例位置
+show(p)
+# 详细参数可参考文档：http://bokeh.pydata.org/en/latest/docs/reference/plotting.html#bokeh.plotting.figure.Figure.circle
