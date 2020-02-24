@@ -1,0 +1,95 @@
+# 数据读取
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import csv
+#encoding='gb18030'
+data1 = pd.read_csv('/Users/rae616188919/Desktop/数据分析/项目资料/项目03知乎数据清洗整理和结论研究_资料/知乎数据_201701.csv',encoding='gb18030')
+data2 = pd.read_csv('/Users/rae616188919/Desktop/数据分析/项目资料/项目03知乎数据清洗整理和结论研究_资料/六普常住人口数.csv',encoding='gb18030')
+
+#作业要求：
+#1、数据清洗 - 去除空值
+#要求：创建函数
+#提示：fillna方法填充缺失数据，注意inplace参数
+def data_clean(df):
+    cols=df.columns
+    for col in cols:
+        if df[col].dtype=='object':
+            df[col].fillna('na',inplace=True)
+        else:
+            df[col].fillna(0,inplace=True)
+    return(df)
+
+df1=data_clean(data1)
+df2=data_clean(data2)
+df1.head()
+df2.head()
+
+# 问题1 知友全国地域分布情况，分析出TOP20
+# 要求：
+# 提示：
+# ① 标准化计算方法 = (X - Xmin) / (Xmax - Xmin)
+# ② 可自行设置图表风格
+
+# ① 按照地域统计 知友数量、知友密度（知友数量/城市常住人口），不要求创建函数
+df_city=df1.groupby('居住地').count()
+data2['city']=data2['地区'].str[:-1]
+q1data=pd.merge(df_city,data2,left_index=True,right_on='city',how='inner')[['_id','city','常住人口']]
+q1data['知友密度']=q1data['_id']/q1data['常住人口']
+
+# ② 知友数量，知友密度，标准化处理，取值0-100，要求创建函数
+ma1=q1data['_id'].max()
+mi1=q1data['_id'].min()
+q1data['_id']=100*(q1data['_id']-mi1)/(ma1-mi1)
+ma2=q1data['知友密度'].max()
+mi2=q1data['知友密度'].min()
+q1data['知友密度']=100*(q1data['知友密度']-mi2)/(ma2-mi2)
+
+# ③ 通过多系列柱状图，做图表可视化
+import matplotlib as mpl
+mpl.rcParams['font.family'] = 'Microsoft YaHei'
+mpl.rcParams['font.sans-serif'] = ['Microsoft YaHei'] #更新字体格式
+mpl.rcParams['font.size'] = 9 
+#按照知友密度排序
+q1data.sort_values(by='知友密度',inplace=True,ascending=False)
+q1data=q1data.iloc[:20]
+fig1=plt.figure(figsize=(12,4))
+plt.bar(q1data['city'],q1data['知友密度'],width=0.8,facecolor='lightskyblue',
+       edgecolor='k')
+plt.title('top20知友密度')
+plt.grid(linestyle='--',color='gray',linewidth=0.5)
+#按照知友数量排序
+q1data.sort_values(by='_id',inplace=True,ascending=False)
+q1data=q1data.iloc[:20]
+fig2=plt.figure(figsize=(12,4))
+plt.bar(q1data['city'],q1data['_id'],width=0.8,facecolor='red',alpha=0.5,edgecolor='k')
+plt.title('top20 知友数量')
+plt.grid(linestyle='--',color='gray',linewidth=0.5)
+
+# 问题2 不同高校知友关注和被关注情况
+# 要求：
+# ① 按照学校（教育经历字段） 统计粉丝数（‘关注者’）、关注人数（‘关注’），并筛选出粉丝数TOP20的学校，不要求创建函数
+
+# ③ 散点图中，标记出平均关注人数（x参考线），平均粉丝数（y参考线）
+# 提示：
+# ① 可自行设置图表风格
+df_school=data1.groupby('教育经历').sum().drop(['na'])
+df2_school=df_school[['关注者','关注']]
+df2_school.columns=['粉丝数','关注人数']
+df2_school.sort_values(by='粉丝数',inplace=True,ascending=False)
+df3_school=df2_school.iloc[:20]
+
+# ② 通过散点图 → 横坐标为关注人数，纵坐标为粉丝数，做图表可视化
+fig2=plt.figure(figsize=(20,10))
+x=df3_school['粉丝数'].astype(int)
+y=df3_school['关注人数'].astype(int)
+plt.scatter(y,x,marker='o',
+            cmap='Blues',s=y/100,c=y,alpha=0.8,edgecolor='k',label='学校')
+follow_mean=y.mean()
+fans_mean=x.mean()
+plt.axvline(follow_mean,label='average fans',linestyle='--',color='r',alpha=0.8)
+plt.axhline(fans_mean,label='average followers',linestyle='--',color='g',alpha=0.8)
+for i,j,n in zip(y,x,df3_school.index):
+    plt.text(i+200,j,n,color='k')
+plt.legend(loc='lower right')
+plt.grid(linestyle='--',color='gray',alpha=0.5)
