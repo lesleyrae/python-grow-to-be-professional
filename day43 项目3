@@ -1,0 +1,185 @@
+'''
+【项目05】  多场景下的算法构建
+
+课程数据：
+某公司A,B产品在2018年1,2,3月的销量数据，数据格式为xlsx
+
+作业要求：
+1、批量读取数据，并输出以下信息
+（1）数据量
+（2）数据字段columns
+（3）输出每个文件分别有多少缺失值
+要求：
+① 创建独立函数，从读取数据到以上输出要求
+② 运行代码多次调用创建函数，对数据进行批量处理
+提示：
+① 将课程excel数据放入单独文件夹(建议英文路径)，函数中通过input来输入excel数据所在文件夹路径，再通过遍历来读取文件
+② pd.read_excel()中用“index_col”参数，将第一列变为index
+③ os.walk(path) → 返回路径中的信息及文件，结果为一个生成器
+④ 定位缺失值位置：data[data.isnull().values == True]
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+import os
+% matplotlib inline
+path='/Users/rae616188919/Desktop/数据分析/项目资料/项目05多场景下的算法构建/data1/'
+folder=os.walk(path)
+files=list(folder)[0][2]
+n=1
+for i in files:
+    file=path+i
+    data=pd.read_excel(file,index_col=0)
+    datalen=len(data)
+    columns=data.columns.tolist()
+    data_nan=len(data[data.isnull().values==True])
+    print('第%i个数据量：%i' % (n,datalen))
+    print('第%i个数据列：' % n,columns)
+    print('第%i个数据缺失量：%i' % (n,data_nan))
+    n+=1
+
+2、批量读取数据，用均值填充缺失值数据，并完成以下计算及图表制作
+（1）读取数据并用均值填充缺失值；对“日期”字段进行时间序列处理，转换成日period ，最后输出三个Dataframe文件data1,data2,data3
+path='/Users/rae616188919/Desktop/数据分析/项目资料/项目05多场景下的算法构建/data1/'
+folder=os.walk(path)
+files=list(folder)[0][2]
+data_files=[]
+for i in files:
+    file=path+i
+    data=pd.read_excel(file,index_col=0)
+    columns=data.columns.tolist()
+    mean1=data[columns[0]].mean()
+    mean2=data[columns[1]].mean()
+    data[columns[0]].fillna(mean1,inplace=True)
+    data[columns[1]].fillna(mean2,inplace=True)
+    data.to_period()
+    data_files.append(data)
+print(data_files)
+
+（2）分别计算data1，data2，data3中A,B产品的月总销量，并绘制多系列柱状图，存储在对应的图片文件夹路径
+'''2、批量读取数据，用均值填充缺失值数据，并完成以下计算及图表制作
+（1）读取数据并用均值填充缺失值；对“日期”字段进行时间序列处理，转换成日period ，最后输出三个Dataframe文件data1,data2,data3
+（2）分别计算data1，data2，data3中A,B产品的月总销量，并绘制多系列柱状图，存储在对应的图片文件夹路径
+（3）分别计算A产品在每个月中哪一天超过了月度80%的销量，输出日期
+要求：
+① 分别创建四个函数，对应完成上述需求
+② 数据文件夹路径和图片存储路径不要相同
+提示：
+① 时间序列转换方法提示：pd.to_period
+② 时间戳Timestampe转化成字符串用str()方法
+'''
+path='/Users/rae616188919/Desktop/数据分析/项目资料/项目05多场景下的算法构建/data1/'
+folder=os.walk(path)
+files=list(folder)[0][2]
+data_files=[]
+su_a=[]
+su_b=[]
+for i in files:
+    file=path+i
+    data=pd.read_excel(file,index_col=0)
+    columns=data.columns.tolist()
+    mean1=data[columns[0]].mean()
+    mean2=data[columns[1]].mean()
+    data[columns[0]].fillna(mean1,inplace=True)
+    data[columns[1]].fillna(mean2,inplace=True)
+    data.to_period()
+    data_files.append(data)
+    su_a.append(data[columns[0]].sum())
+    su_b.append (data[columns[1]].sum())
+su_c=pd.DataFrame({'sum_a':su_a,'sum_b':su_b},index=pd.period_range('201801','201803',freq='M'))
+print(su_c)
+fig=plt.figure(figsize=(10,5))
+su_c.plot(kind='bar',style='--o',color=['g','r'],alpha=0.5)
+plt.savefig(path+'comparison')
+
+path='/Users/rae616188919/Desktop/数据分析/项目资料/项目05多场景下的算法构建/data2/'
+folder=os.walk(path)
+files=list(folder)[0][2]
+data_files=[]
+a_sale=[]
+b_sale=[]
+for i in files:
+    file=path+i
+    data=pd.read_excel(file,index_col=0)
+    mean1=data[columns[0]].mean()
+    mean2=data[columns[1]].mean()
+    data[columns[0]].fillna(mean1,inplace=True)
+    data[columns[1]].fillna(mean2,inplace=True)
+    data.to_period()
+    data_files.append(data)
+
+data1=pd.DataFrame(data_files[0])
+data2=pd.DataFrame(data_files[1])
+data3=pd.DataFrame(data_files[2])
+#联合三个表，同一列标签是axis=0,同一行是axis=1
+data4=pd.concat([data1,data2,data3],axis=0,join='outer',sort=False)
+print(data4)
+
+
+（3）分别计算A产品在每个月中哪一天超过了月度80%的销量，输出日期
+date1=[]
+date2=[]
+for data in data_files:
+    columns=data.columns
+    data['gao_a']=data[columns[0]].cumsum()
+    data['sum_a']=data[columns[0]].sum()
+    data['rate_a']=data['gao_a']/data['sum_a']
+    keydate=data[data['rate_a']>0.8].index[0]
+    data['gao_b']=data[columns[1]].cumsum()
+    data['sum_b']=data[columns[1]].sum()
+    data['rate_b']=data['gao_b']/data['sum_b']
+    keydate2=data[data['rate_b']>0.8].index[0]
+    date1.append(keydate)
+    date2.append(keydate2)
+print(date1)
+print(date2)
+
+#累计的
+data4['suma']=data4['productA'].cumsum()
+data4['sumb']=data4['productB'].cumsum()
+df1=data4[['suma','sumb']]
+fig1=plt.figure(figsize=(10,6))
+df1.plot.area(color=['g','r'],alpha=0.5)
+
+
+要求：
+① 分别创建四个函数，对应完成上述需求
+② 数据文件夹路径和图片存储路径不要相同
+提示：
+① 时间序列转换方法提示：pd.to_period
+② 时间戳Timestampe转化成字符串用str()方法
+
+3、读取数据并合并，做散点图观察A,B产品销量，并做回归，预测当A销量为1200时，B产品销量值
+（1）读取数据删除缺失值；对“日期”字段进行时间序列处理，转换成日period ，合并三个月数据，输出data；
+（2）针对A产品销量和B产品销量数据做回归分析，制作散点图并存储，并预测当A销量为1200时，B产品销量值
+要求：
+① 分别创建两个函数，对应完成上述需求
+② 数据文件夹路径和图片存储路径不要相同
+提示：
+① 用pd.dripna方法去掉缺失值，注意inplace参数
+
+'''
+
+from sklearn.linear_model import LinearRegression
+
+model=LinearRegression()
+model.fit(data['productA'][:,np.newaxis],data['productB'])
+print(model.coef_)
+print(model.intercept_)
+
+xtest=np.linspace(0,1000,1000)
+ytest=model.predict(xtest[:,np.newaxis])
+
+fig2=plt.figure(figsize=(12,4))
+ax1=fig2.add_subplot(1,2,1)
+plt.scatter(xtest,ytest,color='r',alpha=0.5)
+plt.scatter(data['productA'],data['productB'],marker='+',color='gray')
+plt.grid(linestyle='--',alpha=0.5)
+
+ytest2=model.predict(data['productA'][:,np.newaxis])
+plt.scatter(data['productA'][:,np.newaxis],ytest2,marker='x',color='g')
+plt.plot([data['productA'],data['productA']],[data['productB'],ytest2],color='b',alpha=0.5)
+plt.title('ab product sales')
+
+plt.savefig(path+'ab_product_model.png',dpi=400)
