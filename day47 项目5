@@ -1,0 +1,127 @@
+'''
+1、从三个维度“口味”、“人均消费”、“性价比”对不同菜系进行比较，并筛选出可开店铺的餐饮类型
+要求：
+① 计算出三个维度的指标得分
+② 评价方法：
+   口味 → 得分越高越好
+   性价比 → 得分越高越好
+   人均消费 → 价格适中即可
+③ 制作散点图，x轴为“人均消费”，y轴为“性价比得分”，点的大小为“口味得分”
+   绘制柱状图，分别显示“口味得分”、“性价比得分”
+   * 建议用bokeh做图
+提示：
+① 数据清洗，清除空值、为0的数据
+② 口味指标计算方法 → 口味评分字段，按照餐饮类别分组算均值，再做标准化处理
+③ 人均消费指标计算方法 → 人均消费字段，按照餐饮类别分组算均值，再做标准化处理
+④ 性价比指标计算方法 → 性价比 = （口味 + 环境 + 服务）/人均消费，按照餐饮类别分组算均值，再做标准化处理
+⑤ 数据计算之前，检查一下数据分布，去除异常值（以外限为标准）
+   * 这里排除了高端奢侈餐饮的数据干扰
+⑥ 注意，这里先分别计算三个指标，再合并数据（merge）作图，目的是指标之间的噪音数据不相互影响
+'''
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+data=pd.read_excel('/Users/rae616188919/Desktop/数据分析/项目资料/项目07城市餐饮店铺选址分析-1/上海餐饮数据.xlsx')
+print(data.head())
+print(data.columns)
+
+#删除空值
+data.dropna(inplace=True)
+
+
+data1=data[['类别','口味','环境','服务','人均消费']]
+#选择大于0
+data2=data1[(data1['口味']>0) & (data1['人均消费']>0)]
+data2['性价比']=(data2['口味']+data2['环境']+data2['服务'])/data2['人均消费']
+print(data2.head())
+fig,axes=plt.subplots(1,3,figsize=(10,4))
+#选择箱型图，看又没有异常值
+data2.boxplot(column='口味',ax=axes[0])
+data2.boxplot(column='环境',ax=axes[1])
+data2.boxplot(column='服务',ax=axes[2])
+
+#删除异常值
+def ycz(data,col):
+    f1=data[col].quantile(q=0.25)
+    f2=data[col].quantile(q=0.75)
+    iqr=f2-f1
+    t1=f1-3*iqr
+    t2=f2+3*iqr
+    return data[(data[col]>t1) & (data[col]<t2)][['类别',col]]
+
+kw=ycz(data2,'口味')
+hj=ycz(data2,'环境')
+fw=ycz(data2,'服务')
+xf=ycz(data2,'人均消费')
+xjb=ycz(data2,'性价比')
+
+# 创建函数 → 标准化指标并排序
+def bzh(data,col):
+    col_name=col+'_norm'
+    data_gp=data.groupby('类别').mean()
+    data_gp[col_name]=(data_gp[col]-data_gp[col].min())/(data_gp[col].max()-data_gp[col].min())
+    data_gp.sort_values(by=col_name,inplace=True,ascending=False)
+    return data_gp
+    
+from bokeh.io import output_notebook
+output_notebook()
+from bokeh.plotting import figure,show
+from bokeh.models import ColumnDataSource
+
+d_kw=bzh(kw,'口味')
+d_hj=bzh(hj,'环境')
+d_fwu=bzh(fw,'服务')
+d_xjb=bzh(xjb,'性价比')
+d_xf=bzh(xf,'人均消费')
+d1=pd.merge(d_kw,d_xjb,left_index=True,right_index=True)
+d2=pd.merge(d1,d_xf,left_index=True,right_index=True)
+print(d2.head())
+
+from bokeh.models import HoverTool
+from bokeh.layouts import gridplot
+from bokeh.models.annotations import BoxAnnotation
+#设置画图空间
+d2.index.name='type'
+d2.columns=['kw','kw_norm','xjb','xjb_norm','xf','xf_norm','size']
+d2['size']=d2['kw_norm']*40
+source=ColumnDataSource(d2)
+hover=HoverTool(tooltips=[('餐饮类型','@type'),
+                         ('人均消费','@xf'),
+                         ('性价比得分','@xjb_norm'),
+                         ('口味得分','@kw_norm')])
+result=figure(plot_width=800,plot_height=250,
+             title='餐饮类型得分',
+             x_axis_label='人均消费',
+             y_axis_label='性价比得分',
+             tools=[hover,'box_select,reset,xwheel_zoom,pan,crosshair'])
+#设置散点图
+result.circle(x='xf',y='xjb_norm',source=source,line_color='black',
+              line_dash=[6,4],fill_alpha=0.6,size='size')
+#设置中间值
+price_mid=BoxAnnotation(left=40,right=80,fill_alpha=0.1,fill_color='navy')
+result.add_layout(price_mid)
+result.title.text_font_style='bold'
+result.ygrid.grid_line_dash=[6,4]
+result.xgrid.grid_line_dash=[6,4]
+show(result)
+
+#绘制柱状图
+data_type=d2.index.tolist()
+kw=figure(plot_width=800,plot_height=250,title='口味得分',x_range=data_type,
+          tools=[hover,'box_select,reset,xwheel_zoom,pan,crosshair'])
+kw.vbar(x='type',top='kw_norm',source=source,width=0.9,alpha=0.5,color='red')
+kw.ygrid.grid_line_dash=[6,4]
+kw.xgrid.grid_line_dash=[6,4]
+show(kw)
+
+price=figure(plot_width=800,plot_height=250,title='价格',x_range=data_type,
+             tools=[hover,'box_select,reset,xwheel_zoom,pan,crosshair'])
+price.vbar(x='type',top='xf_norm',source=source,width=0.9,alpha=0.5,color='navy')
+price.ygrid.grid_line_dash=[6,4]
+price.xgrid.grid_line_dash=[6,4]
+show(price)
+
+#结合不同的画
+p=gridplot([[result],[kw],[price]])
+show(p)
