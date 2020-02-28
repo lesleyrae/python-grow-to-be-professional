@@ -1,0 +1,82 @@
+'''
+2、综合指标判断运动员的身材，并找到TOP8的运动员，并制作图表，数据为“奥运运动员数据.xlsx，sheet → 运动员信息”
+要求：
+① 针对不同指标，绘制面积堆叠图
+② TOP8的运动员，绘制雷达图表示
+提示：
+① 四个指标评判运动员身材，并加权平均
+   a. BMI 指数（BMI =体重kg ÷ 身高m**2，详细信息可百度查询）→ 越接近22分数越高
+   b. 腿长/身高 指数 → 数据筛选，只选取小于0.7的数据，越大分数越高
+   c. 臂展/身高 指数 → 数据筛选，只选取大于0.7的数据，比值越接近1分数越高
+   d. 年龄 指数 → 年龄越小分数越高
+   对上述abcd指标分别标准化得到n1,n2,n3,n4（划分到0-1的分值）
+   最后评分： finalscore = (n1 + n2 + n3 + n4)/4
+② 制作堆叠面积图，data.plot.area()
+③ 雷达图需要构建子图 + for循环遍历得到
+
+'''
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+data=pd.read_excel('/Users/rae616188919/Desktop/数据分析/项目资料/项目06多场景下的图表可视化表达/奥运运动员数据.xlsx',sheetname=1)
+columns=data.columns
+print(columns)
+
+data1=data[['event','name','age','height','weight','arm','leg']]
+#删除空值
+data1.dropna(0,inplace=True)
+#np.abs()
+data1['bmi']=np.abs(data1['weight']/data1['height']**2-22)
+#标准化
+bm_max=data1['bmi'].max()
+bm_min=data1['bmi'].min()
+data1['bmi']=(data1['bmi']-bm_min)/(bm_max-bm_min)
+data1['leg/h']=np.abs(data1['leg']/data1['height']-1)
+leg_max=data1['leg/h'].max()
+leg_min=data1['leg/h'].min()
+data1['leg/h']=(data1['leg/h']-leg_min)/(leg_max-leg_min)
+data1['arm/h']=data1['arm']/data1['height']
+arm_max=data1['arm/h'].max()
+arm_min=data1['arm/h'].min()
+data1['arm/h']=(data1['arm/h']-arm_min)/(arm_max-arm_min)
+age_max=data1['age'].max()
+age_min=data1['age'].min()
+data1['age']=1-((data1['age']-age_min)/(age_max-age_min))
+data1[data1['leg/h']<0.7]
+data1[data1['arm/h']>0.7]
+print(data1.head())
+
+data_re=data1[['name','age','arm/h','leg/h','bmi']]
+data_re['finalscore']=(data_re['age']+data_re['arm/h']+data_re['leg/h']+data_re['bmi'])/4
+data_re.sort_values(by='finalscore',inplace=True,ascending=False)
+#要重新排序
+data_re.reset_index(inplace=True)
+print(data_re.head())
+#data.plot.area(colormap=)
+plt.figure(figsize=(10,6))
+data_re[['age','arm/h','leg/h','bmi']].plot.area(colormap='PuRd',alpha=0.8)
+plt.grid(linestyle='--',alpha=0.5,color='gray')
+
+'''
+(2) 解读身材最好的前8位运动员
+'''
+data_top8=data_re[['name','age','arm/h','leg/h','bmi','finalscore']].iloc[:8]
+fig=plt.figure(figsize=(15,6))
+plt.rcParams['font.sans-serif'] = ['KaiTi']  # 显示中文
+
+for i in range(8):
+    axi=plt.subplot(2,4,i+1,projection='polar')
+    labels=np.array(['年龄','臂长','腿长','bmi'])
+    datalenth=4
+    data_radar=np.array([data_re['age'][i],data_re['arm/h'][i],data_re['leg/h'][i],data_re['bmi'][i]])
+    angles=np.linspace(0,2*np.pi,datalenth,endpoint=False)
+    #闭合
+    data_rader=np.concatenate((data_radar,[data_radar[0]]))
+    #雷达图
+    plt.polar(angles,data_radar,'bo-',linewidth=1)
+    #标签
+    plt.thetagrids(angles*180/np.pi,labels)
+    #填充
+    plt.fill(angles,data_radar,facecolor='r',alpha=0.25)
+    scorei = data_top8['finalscore'][data_top8['name']==i].astype('float')
+
