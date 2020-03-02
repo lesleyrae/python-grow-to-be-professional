@@ -1,0 +1,125 @@
+一、
+现有数据双十一活动的活动，分析各品牌双十一售卖规律
+1.读取文件
+pd.excel
+时间、id、内容、店名、价格
+2.整理数据
+（1）
+删除空值 dropna
+按照店名分类 groupby().count 
+去重 unique
+设置索引 data.set_index([‘’],inplace=true)
+（2）按照时间分类 d1
+将时间设为天数 data.index.day
+最小、最大的天数 groupby(by='id').agg(['min','max'])[‘date’]
+（3）选择双十一的商品的表格 d2
+Date['date']==1.unique()
+pd.dataframe
+（4）合并成两个表,再设置成false
+pd.merge(d1,d2)
+3.设置分类 type
+（1）双十一没有售的，前后都有售——a
+（2）双十一没有售，后面有售——b
+（3）双十一没有售，前面有售——c
+（2）双十一有售，前后都有售——d
+（3）双十一有售，前面有售，后面没有售——e
+（4）双十一有售，前面没有售，后面有售——f
+（5）双十一有售，前后都没有售——g
+按照type分类 .value_counts()
+4.画图
+设置横轴：.index.tolist()
+设置source：columndatasource(data=)
+设置hover： hovertool(tooltips=[(‘’,'@')])
+设置figure:p=figure(x_range=,plot_width,plot_height,color=,alpha=,legend=[value(x) for x in type1],muted_color=,)
+设置vbar_stack: p.vbar_stack
+
+二、判断哪些商品真的在打折
+真正打折的商品最低价只有一次
+1.按照时间分成标签
+data[‘period’]=Pd.cut(data,[],labels=['’])
+选择最低的价格
+price=data[[‘id’,'price’]].groupby([‘id’,’price’]).min( )
+重新设置索引
+price.reset_index(inplace=true)
+选择真正打折的商品，
+id_count=price['id’].value_counts
+2.折扣率是多少？ 双十一的价格/双十一之前的价格
+Data.groupby([‘id’,’period’]).min()
+data.reset_index(inplace=true)
+Data[‘period’]==‘before11’ d1
+Data[‘period’]==‘after11’ d2
+pd.merge(d1,d2,on=‘')
+zkl=data[price_x]/data[price_y]
+3.画图
+删除空值 Data.dropna
+分类 pd.cut(data[‘zkl’],bins=np.linspace(start,end,次数)) 
+删去0.95-1 几乎没打折 .groupby(‘range’).count().iloc[:-1]
+累计折扣率 data/data.sum( )
+
+source=ColumnDataSource(data=)
+hover=HoverTool(tooltips=[(‘’,’@zkl’)]
+p=figure(x_range=,plot_width=,plot_height=,title=‘’,tools=[hover,’reset,xwheel_zoom,pan,crosshair']
+ p.line(x=‘’,y=‘’,source=source,line_width=,line_alpha=,line_color=‘’,
+Line_dash=[ ])
+p.circle(x=‘’,y=‘’,source=source,size=8,color=‘’,alpha=)
+格子：p.xgrid.grid_line_color
+刻度：p.axis.minor_tick_line_color=None
+外线：p.outline_line_color=none
+Show(p)
+
+# 按照品牌分析，不同品牌的打折力度
+# 用bokeh绘制浮动散点图，y坐标为品牌类型，x坐标为折扣力度
+From bokeh.transform import jitter
+#得到y坐标
+brands=data[‘’].dropna( ).unique( ).tolist( )
+# 创建数据
+data.dropna
+[Data[‘’]<0.95]
+source=ColumnDataSource(data=bokeh_data)
+# 设置标签显示内容
+hover=HoverTool(tooltips=[(‘’,'@')])
+p=figure(plot_width=800,plot_height=600,y_range=brands,title=‘’,tools=[hover,’reset,ywheel_zoom,pan,crosshair’])
+p.circle(x=‘zkl’,y=jitter(y,width=0.6,rnage=p.y_range),
+source=source,alpha=0.3)
+p.ygrid.grid_line_color=None
+Show(p)
+
+'''
+3、商家营销套路挖掘？
+要求：
+① 解析出不同品牌的参与打折商品比例及折扣力度，并做散点图，总结打折套路
+   * 用bokeh绘制散点图，x轴为参与打折商品比例，y轴为折扣力度，点的大小代表该品牌参加双11活动的商品总数
+提示：
+① 折扣力度为该品牌所有打折商品的折扣均值，这里去掉品牌中不打折的数据
+② 绘制散点图后，可以将x、y轴绘制均值辅助线，将绘图空间分为四个象限，基于该象限来总结套路
+
+‘''
+选择未打折的商品 data.value_counts d3
+选择打折商品 data.value_counts d4
+不同品牌的折扣率 .groupby(‘’)[‘zkl’].mean( )
+合并两张表 pd.merge()
+折扣率=
+
+from bokeh.models.annotations import Span            # 导入Span模块
+from bokeh.models.annotations import Label           # 导入Label模块
+from bokeh.models.annotations import BoxAnnotation   # 导入BoxAnnotation模块
+source=ColumnDataSource(data)
+x_mean
+Y_mean
+hover=HoverToopl(tooltips=[(‘’,’@‘),…]
+p=figure(plot_width,plot_height,title=‘’,tools=[hover,’box_select,reset,wheel_zoom,pan,crosshair’])
+p.circle(x=‘’,y=‘’,source=source,size=,fill_color=‘’,line_color=‘’,fill_alpha=,line_dash=[ ])
+p.ygrid.grid_line_dash=[ ]
+p.xgrid.grid_line_dash=[ ] 
+
+辅助线:
+x=span(location=x_mean,dimension=‘height’,line_color=‘’,line_alpha=,line_width=,line_dash=[ ])
+y=span(location=y_mean,dimension=‘width’,line_color=‘’,line_alpha=,line_width=,line_dash=[ ])
+
+绘制象限：
+bg1 = BoxAnnotation(bottom=y_mean, right=x_mean,fill_alpha=0.1, fill_color='olive’)
+label1 = Label(x=0.1, y=0.55,text="少量大打折",text_font_size="10pt" )
+p.add_layout( bg1)
+p.add_layout(label1)
+
+
