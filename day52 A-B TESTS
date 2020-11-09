@@ -1,0 +1,58 @@
+#https://www.kesci.com/mw/project/5efee4a563975d002c98adba
+
+#import libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+data=pd.read_csv('/Users/rae616188919/Desktop/audience_expansion/effect_tb.csv',header=None)
+data.columns=['dt','user_id','label','dmp_id']
+#delete dt
+data=data.drop(columns='dt')
+print(data.head())
+data.describe()
+
+#处理重复值
+# shape of data & distinct columns
+print(data.shape)
+data.nunique()
+#删除重复行,检查重复行
+data=data.drop_duplicates()
+data[data.duplicated()]
+
+#空值处理
+data.info(null_counts=True)
+
+#检测异常值(用透视表看有没有异常值)
+data.pivot_table(index='dmp_id',columns='label',values='user_id',aggfunc='count')
+
+#对照组的基准线
+data[data["dmp_id"]==1]['label'].mean()
+#点击率是1.26%，设置营销点击率为2.65%
+#https://www.evanmiller.org/ab-testing/sample-size.html
+#sample size是2167
+#分组统计
+data['dmp_id'].value_counts()
+
+#储存清理好的数据
+data.to_csv('/Users/rae616188919/Desktop/audience_expansion/ready_csv')
+
+#对比多个策略下点击率的区别
+print(data[data['dmp_id']==1]['label'].mean())
+print(data[data['dmp_id']==2]['label'].mean())
+print(data[data['dmp_id']==3]['label'].mean())
+
+# 接下来需要进行假设检验，看策略二点击率的提升是否显著。
+# 策略2和对照组是否有统计意义上的差异
+# 独立上样本，n>30,z检验
+import statsmodels.stats.proportion as sp
+
+#用户数
+n_old=len(data[data.dmp_id==1])
+n_2=len(data[data.dmp_id==2])
+#点击数
+c_old=len(data[data.dmp_id==1][data.label==1])
+c_2=len(data[data.dmp_id==2][data.label==1])
+# 点击率
+z_score,p=sp.proportions_ztest([c_old,c_2],[n_old,n_2])
+print("z:",z_score,'p:',p)
