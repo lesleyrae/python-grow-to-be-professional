@@ -1,0 +1,125 @@
+#说明：rmf分析是按照客户的销售额、最近一次购买的时间、和频率把客户分为8个等级
+# 钱多、频率高、最近：高价值；钱多、频率高、较远：唤回；钱多、频率低、最近：深耕；钱多、频率低、较远：挽留
+# 钱少、频率高、最近：潜力； 钱少、频率低，最近：新用户；钱少、频率高、较远：一般；钱少、频率低、较远：流失
+
+import pandas as pd
+data=pd.read_csv('/Users/rae616188919/Desktop/data.csv',header=0)
+data['CustomerID']=data['CustomerID'].astype("str")
+data.describe()
+
+#删除异常值
+data=data[(data['Quantity']>=0) & (data['UnitPrice']>=0)]
+data.describe()
+
+#删除重复值
+data.drop_duplicates()
+# 注意这里因为inplace为真，直接在原数据上修改，直接输出是空
+#删除重复值（同一个invoiceno和customerid）
+data.drop_duplicates(subset=['InvoiceNo','CustomerID'],keep='first',inplace=True)
+
+#检查空值
+data.isnull().sum()
+
+#转变数据类型
+data['InvoiceDate']=pd.to_datetime(data['InvoiceDate'])
+
+#添加金额的列
+data['sales']=data['Quantity']*data['UnitPrice']
+
+#按照customerid进行分组，按照订单数量进行frequency,as_index不作为索引
+df=data.groupby(by='CustomerID',as_index=True)['InvoiceNo'].count()
+print(df.head())
+
+#改变列名
+df.columns= ['CustomerID','Frequency']
+
+#dt.days datetime-day
+# 按用户ID分组计算总销售金额、最后一次交易的日期 df.agg({'':'sum','':'max'})
+df_group=data.groupby('CustomerID')
+df_rn=df_group.agg({'sales':'sum','InvoiceDate':'max'})
+df_rn['datediff']=(pd.to_datetime('2012-01-01')-df_rn['InvoiceDate']).dt.days
+print(df_rn.head())
+
+# 合并数据
+df2=df_rn.merge(df,on='CustomerID')
+df2.head()
+
+df2=df2.drop('InvoiceDate',axis=1)
+print(df2.head())
+
+#描述直方图
+import seaborn as sns
+import matplotlib.pyplot as plt
+plt.style.use('fivethirtyeight')
+%matplotlib inline
+
+plt.figure(1,figsize=(12,6))
+n=0 
+for x in ['InvoiceNo','datediff','sales']:
+    n+=1
+    plt.subplot(1,3,n)
+    #其中left、bottom、right、top围成的区域就是子图的区域。wspace、hspace分别表示子图之间左右、上下的间距。
+    plt.subplots_adjust(hspace=0.5,wspace=0.5)
+    sns.distplot(df2[x],bins=30)
+    plt.title('{} distplot'.format(x))
+plt.show()
+
+#frequency_ 
+#recency
+#moentary
+
+#阈值 r,f,m均值
+fm=df2['InvoiceNo'].mean()
+rm=df2['datediff'].mean()
+mm=df2['sales'].mean()
+print(rm,fm,mm)
+
+#分类
+customer_type=[]
+for i in range(len(df2)):
+    if df2.iloc[i,0]>=mm and df2.iloc[i,1]<=rm and df2.iloc[i,2]>=fm:
+        customer_type.append('重要价值用户')
+    elif df2.iloc[i,0]>=mm and df2.iloc[i,1]>=rm and df2.iloc[i,2]>=fm:
+        customer_type.append('重要唤回用户')
+    elif df2.iloc[i,0]>=mm and df2.iloc[i,1]<=rm and df2.iloc[i,2]<=fm:
+        customer_type.append('重要深耕用户')
+    elif df2.iloc[i,0]>=mm and df2.iloc[i,1]>=rm and df2.iloc[i,2]<=fm:
+        customer_type.append('重要挽留用户')
+    elif df2.iloc[i,0]<=mm and df2.iloc[i,1]<=rm and df2.iloc[i,2]>=fm:
+        customer_type.append('潜力用户') 
+    elif df2.iloc[i,0]<=mm and df2.iloc[i,1]>=rm and df2.iloc[i,2]>=fm:
+        customer_type.append('一般维持用户') 
+    elif df2.iloc[i,0]<=mm and df2.iloc[i,1]<=rm and df2.iloc[i,2]<=fm:
+        customer_type.append('新用户')
+    elif df2.iloc[i,0]<=mm and df2.iloc[i,1]>=rm and df2.iloc[i,2]<=fm:
+        customer_type.append('流失用户')
+
+#将客户的计数放出来 list将dataframe变成list
+#groupby(by=).size().reset_index(name='客户数')
+df3=df2.groupby(by='class').size().reset_index(name='客户数')
+df3=list(df3['客户数'])
+df4=sorted(df3,reverse=True)
+
+#按照分类，将金额加总
+df2.groupby(by='class').sales.sum().reset_index(name='钱')
+print(df4)
+
+#画图
+import matplotlib.pyplot as plt
+from pylab import *
+mpl.rcParams['font.sans-serif'] = ['SimHei']
+%matplotlib inline
+plt.figure(1,figsize=(12,7))
+#x 横向 y纵向， order排序，data数据
+sns.countplot(y='class',order=df2['class'].value_counts().index,data=df2,palette='viridis')
+for x,y in enumerate(df4):
+    plt.text(y+0.1,x,'%s' %y,va='center',size=12)
+plt.show()
+
+#5）不同类型的客户消费份额
+plt.figure(1,figsize=(10,10))
+labels=df2.groupby('class').sales.sum().index
+size=df2.groupby('class').sales.sum()
+plt.pie(size,labels=labels,autopct='%.2f%%',wedgeprops={'width':0.35,'edgecolor':'w'},pctdistance=0.85)
+plt.title('不同类型的客户销售份额',fontsize=20)
+plt.show()
